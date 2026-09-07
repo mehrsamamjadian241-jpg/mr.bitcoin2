@@ -723,7 +723,7 @@
             </div>
 
             <div class="proxy-info">
-                ⚡ از CORS Proxy رایگان برای دسترسی به TGJU استفاده می‌شود
+                ⚡ نرخ دلار زنده دریافت می‌شود؛ در صورت قطعی، نرخ پیش‌فرض استفاده می‌شود
             </div>
 
             <div class="currency-grid"
@@ -749,7 +749,6 @@
             </div>
         </section>
 
-
         <section class="ai-section">
 
             <div class="ai-header">
@@ -760,7 +759,7 @@
                     <h2>هوش مصنوعی Mr. Bitcoin</h2>
 
                     <p>
-                        تحلیل و پیش‌بینی هر ۱ ساعت -
+                        تحلیل و پیش‌بینی بر اساس داده‌های بازار -
                         آخرین بروزرسانی:
                         <span id="aiUpdateTime">--:--</span>
                     </p>
@@ -789,7 +788,6 @@
             </div>
 
         </section>
-
 
         <section class="table-section">
 
@@ -828,7 +826,6 @@
 
     </main>
 
-
     <footer class="footer">
 
         <p>
@@ -862,7 +859,6 @@
 
     </footer>
 
-
     <div class="notification"
          id="notification">
         ✅ داده‌ها با موفقیت به‌روزرسانی شدند!
@@ -891,12 +887,14 @@ const API = {
 
 const CONFIG = {
 
-    // دقیقاً 60 ثانیه
+    // بروزرسانی دقیقاً هر 60 ثانیه
     UPDATE_INTERVAL: 60 * 1000,
 
-    // اگر دلار دریافت نشد،
-    // فقط برای محاسبه تقریبی تومان استفاده می‌شود.
-    DEFAULT_DOLLAR_TOMAN: 85000
+    // نرخ پیش‌فرض فعلی دلار به تومان
+    DEFAULT_DOLLAR_TOMAN: 223000,
+
+    // جلوگیری از استفاده از نرخ‌های خیلی قدیمی
+    MIN_REASONABLE_DOLLAR_TOMAN: 150000
 };
 
 
@@ -907,18 +905,7 @@ const CONFIG = {
 let cryptoData = [];
 
 let tgjuData = {
-
-    dollar: null,
-
-    euro: null,
-
-    gold: null,
-
-    coin: null,
-
-    tether: null,
-
-    bitcoin: null
+    dollar: null
 };
 
 
@@ -933,7 +920,7 @@ let updateRunning = false;
 
 
 /* =====================================================
-   FORMAT FUNCTIONS
+   FORMAT
 ===================================================== */
 
 function formatNumber(num) {
@@ -941,14 +928,14 @@ function formatNumber(num) {
     if (
         num === null ||
         num === undefined ||
-        isNaN(num)
+        !Number.isFinite(Number(num))
     ) {
         return '---';
     }
 
     return new Intl.NumberFormat('en-US', {
         maximumFractionDigits: 2
-    }).format(num);
+    }).format(Number(num));
 }
 
 
@@ -957,13 +944,13 @@ function formatToman(num) {
     if (
         num === null ||
         num === undefined ||
-        isNaN(num)
+        !Number.isFinite(Number(num))
     ) {
         return '---';
     }
 
     return new Intl.NumberFormat('fa-IR').format(
-        Math.round(num)
+        Math.round(Number(num))
     );
 }
 
@@ -982,6 +969,47 @@ function formatTime(date) {
 
 
 /* =====================================================
+   DIGIT NORMALIZER
+===================================================== */
+
+function normalizeDigits(value) {
+
+    return String(value ?? '')
+        .replace(
+            /[۰-۹]/g,
+            d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)
+        )
+        .replace(
+            /[٠-٩]/g,
+            d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)
+        );
+}
+
+
+function parseNumber(value) {
+
+    if (
+        typeof value === 'number' &&
+        Number.isFinite(value)
+    ) {
+        return value;
+    }
+
+    const normalized =
+        normalizeDigits(value)
+            .replace(/[,\s٬]/g, '')
+            .replace(/٫/g, '.');
+
+    const result =
+        Number(normalized);
+
+    return Number.isFinite(result)
+        ? result
+        : null;
+}
+
+
+/* =====================================================
    DOLLAR RATE
 ===================================================== */
 
@@ -989,13 +1017,16 @@ function getDollarTomanRate() {
 
     if (
         tgjuData.dollar &&
-        tgjuData.dollar.price &&
-        !isNaN(tgjuData.dollar.price)
+        Number.isFinite(
+            Number(
+                tgjuData.dollar.price_toman
+            )
+        )
     ) {
 
-        // TGJU معمولاً ریال می‌دهد
-        // تبدیل ریال به تومان
-        return tgjuData.dollar.price / 10;
+        return Number(
+            tgjuData.dollar.price_toman
+        );
     }
 
     return CONFIG.DEFAULT_DOLLAR_TOMAN;
@@ -1008,15 +1039,17 @@ function getDollarTomanRate() {
 
 function tomanPrice(usdPrice) {
 
+    const price =
+        Number(usdPrice);
+
     if (
-        usdPrice === null ||
-        usdPrice === undefined ||
-        isNaN(usdPrice)
+        !Number.isFinite(price)
     ) {
         return 0;
     }
 
-    return usdPrice * getDollarTomanRate();
+    return price *
+        getDollarTomanRate();
 }
 
 
@@ -1026,53 +1059,67 @@ function tomanPrice(usdPrice) {
 
 function createSparkline(data, color) {
 
-    if (!data || data.length < 2) {
+    if (
+        !data ||
+        data.length < 2
+    ) {
         return '';
     }
 
-    const validData = data.filter(
-        v =>
-            v !== null &&
-            v !== undefined &&
-            !isNaN(v)
-    );
+    const validData =
+        data.filter(
+            v =>
+                v !== null &&
+                v !== undefined &&
+                !isNaN(v)
+        );
 
-    if (validData.length < 2) {
+    if (
+        validData.length < 2
+    ) {
         return '';
     }
 
-    const min = Math.min(...validData);
+    const min =
+        Math.min(...validData);
 
-    const max = Math.max(...validData);
+    const max =
+        Math.max(...validData);
 
-    const range = max - min || 1;
+    const range =
+        max - min || 1;
 
     const width = 100;
-
     const height = 30;
 
-    const points = validData.map(
-        (v, i) => {
+    const points =
+        validData.map(
+            (v, i) => {
 
-            const x =
-                (i / (validData.length - 1)) *
-                width;
+                const x =
+                    (i /
+                        (validData.length - 1)
+                    ) *
+                    width;
 
-            const y =
-                height -
-                ((v - min) / range) *
-                height;
+                const y =
+                    height -
+                    ((v - min) / range) *
+                    height;
 
-            return `${x},${y}`;
-        }
-    ).join(' ');
+                return `${x},${y}`;
+            }
+        ).join(' ');
 
 
     const lastY =
         height -
         (
-            (validData[validData.length - 1] - min)
-            / range
+            (
+                validData[
+                    validData.length - 1
+                ] - min
+            ) / range
         ) *
         height;
 
@@ -1083,7 +1130,6 @@ function createSparkline(data, color) {
             viewBox="0 0 100 30"
             preserveAspectRatio="none"
         >
-
             <polyline
                 points="${points}"
                 fill="none"
@@ -1099,7 +1145,6 @@ function createSparkline(data, color) {
                 r="3"
                 fill="${color}"
             />
-
         </svg>
     `;
 }
@@ -1113,13 +1158,16 @@ async function fetchTgjuDollar() {
 
     try {
 
-        const response = await fetch(
-            API.TGJU_API_GO + '/currency',
-            {
-                method: 'GET',
-                signal: AbortSignal.timeout(10000)
-            }
-        );
+        const response =
+            await fetch(
+                API.TGJU_API_GO + '/currency',
+                {
+                    method: 'GET',
+                    cache: 'no-store',
+                    signal:
+                        AbortSignal.timeout(10000)
+                }
+            );
 
 
         if (!response.ok) {
@@ -1135,88 +1183,124 @@ async function fetchTgjuDollar() {
 
 
         if (
-            data &&
-            Array.isArray(data.items)
+            !data ||
+            !Array.isArray(data.items)
+        ) {
+            throw new Error(
+                'Invalid TGJU response'
+            );
+        }
+
+
+        const dollar =
+            data.items.find(
+                item =>
+                    item.key ===
+                    'price_dollar_rl'
+            );
+
+
+        if (!dollar) {
+            throw new Error(
+                'Dollar not found'
+            );
+        }
+
+
+        /*
+         * TGJU قیمت را به ریال می‌دهد.
+         */
+
+        const priceRial =
+            parseNumber(
+                dollar.price?.value
+            );
+
+
+        if (
+            !priceRial ||
+            priceRial <= 0
+        ) {
+            throw new Error(
+                'Invalid dollar price'
+            );
+        }
+
+
+        const priceToman =
+            priceRial / 10;
+
+
+        /*
+         * اگر API قدیمی و خراب بود
+         * مثلاً 85000 برگرداند،
+         * از آن استفاده نمی‌کنیم.
+         */
+
+        if (
+            priceToman <
+            CONFIG.MIN_REASONABLE_DOLLAR_TOMAN
         ) {
 
-            const dollar =
-                data.items.find(
-                    item =>
-                        item.key ===
-                        'price_dollar_rl'
-                );
-
-
-            if (dollar) {
-
-                const price =
-                    parseFloat(
-                        String(dollar.price?.value || '')
-                        .replace(/,/g, '')
-                        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-                    );
-
-
-                const change =
-                    parseFloat(
-                        String(dollar.change?.percent || 0)
-                        .replace(/,/g, '')
-                    );
-
-
-                const low =
-                    parseFloat(
-                        String(dollar.low?.value || price)
-                        .replace(/,/g, '')
-                    );
-
-
-                const high =
-                    parseFloat(
-                        String(dollar.high?.value || price)
-                        .replace(/,/g, '')
-                    );
-
-
-                if (!isNaN(price)) {
-
-                    return {
-
-                        price: price,
-
-                        change:
-                            isNaN(change)
-                                ? 0
-                                : change,
-
-                        low:
-                            isNaN(low)
-                                ? price
-                                : low,
-
-                        high:
-                            isNaN(high)
-                                ? price
-                                : high,
-
-                        time:
-                            dollar.time ||
-                            formatTime(new Date())
-                    };
-                }
-            }
+            throw new Error(
+                'Dollar API returned stale price'
+            );
         }
+
+
+        const change =
+            parseNumber(
+                dollar.change?.percent
+            ) ?? 0;
+
+
+        const lowRial =
+            parseNumber(
+                dollar.low?.value
+            ) ?? priceRial;
+
+
+        const highRial =
+            parseNumber(
+                dollar.high?.value
+            ) ?? priceRial;
+
+
+        return {
+
+            price_rial:
+                priceRial,
+
+            price_toman:
+                priceToman,
+
+            change:
+                change,
+
+            low:
+                lowRial,
+
+            high:
+                highRial,
+
+            time:
+                dollar.time ||
+                formatTime(new Date()),
+
+            source:
+                'live'
+
+        };
 
     } catch (error) {
 
         console.warn(
-            'TGJU API failed:',
+            'Live dollar API failed:',
             error
         );
+
+        return null;
     }
-
-
-    return null;
 }
 
 
@@ -1245,6 +1329,7 @@ async function fetchCryptoPrices() {
             url,
             {
                 method: 'GET',
+                cache: 'no-store',
                 headers: {
                     'Accept':
                         'application/json'
@@ -1278,55 +1363,56 @@ async function fetchCryptoPrices() {
     }
 
 
-    return data.map(coin => ({
+    return data.map(
+        coin => ({
 
-        id:
-            coin.id,
+            id:
+                coin.id,
 
-        name:
-            coin.name,
+            name:
+                coin.name,
 
-        symbol:
-            String(
-                coin.symbol || ''
-            ).toUpperCase(),
+            symbol:
+                String(
+                    coin.symbol || ''
+                ).toUpperCase(),
 
-        price_usd:
-            Number(
-                coin.current_price
-            ),
+            price_usd:
+                Number(
+                    coin.current_price
+                ),
 
-        change_24h:
-            Number(
-                coin.price_change_percentage_24h || 0
-            ),
+            change_24h:
+                Number(
+                    coin.price_change_percentage_24h || 0
+                ),
 
-        volume:
-            coin.total_volume
-                ? formatVolume(
-                    coin.total_volume
+            volume:
+                coin.total_volume
+                    ? formatVolume(
+                        coin.total_volume
+                    )
+                    : '---',
+
+            icon:
+                getCoinIcon(
+                    coin.symbol
+                ),
+
+            color:
+                getCoinColor(
+                    coin.id
+                ),
+
+            sparkline:
+                coin.sparkline_in_7d &&
+                Array.isArray(
+                    coin.sparkline_in_7d.price
                 )
-                : '---',
-
-        icon:
-            getCoinIcon(
-                coin.symbol
-            ),
-
-        color:
-            getCoinColor(
-                coin.id
-            ),
-
-        sparkline:
-            coin.sparkline_in_7d &&
-            Array.isArray(
-                coin.sparkline_in_7d.price
-            )
-                ? coin.sparkline_in_7d.price
-                : []
-
-    }));
+                    ? coin.sparkline_in_7d.price
+                    : []
+        })
+    );
 }
 
 
@@ -1336,20 +1422,29 @@ async function fetchCryptoPrices() {
 
 function formatVolume(vol) {
 
-    if (!vol || isNaN(vol)) {
+    if (
+        !vol ||
+        isNaN(vol)
+    ) {
         return '---';
     }
 
     if (vol >= 1e9) {
-        return `$${(vol / 1e9).toFixed(2)}B`;
+        return `$${(
+            vol / 1e9
+        ).toFixed(2)}B`;
     }
 
     if (vol >= 1e6) {
-        return `$${(vol / 1e6).toFixed(2)}M`;
+        return `$${(
+            vol / 1e6
+        ).toFixed(2)}M`;
     }
 
     if (vol >= 1e3) {
-        return `$${(vol / 1e3).toFixed(2)}K`;
+        return `$${(
+            vol / 1e3
+        ).toFixed(2)}K`;
     }
 
     return `$${vol}`;
@@ -1357,7 +1452,7 @@ function formatVolume(vol) {
 
 
 /* =====================================================
-   COIN ICON
+   ICON
 ===================================================== */
 
 function getCoinIcon(symbol) {
@@ -1365,31 +1460,26 @@ function getCoinIcon(symbol) {
     const icons = {
 
         btc: '₿',
-
         eth: 'Ξ',
-
         usdt: '₮',
-
         bnb: 'B',
-
         sol: '◎',
-
         xrp: '✕',
-
         ada: '₳',
-
         doge: 'Ð'
     };
 
 
     return icons[
-        String(symbol || '').toLowerCase()
+        String(
+            symbol || ''
+        ).toLowerCase()
     ] || '◈';
 }
 
 
 /* =====================================================
-   COIN COLOR
+   COLOR
 ===================================================== */
 
 function getCoinColor(id) {
@@ -1397,50 +1487,17 @@ function getCoinColor(id) {
     const colors = {
 
         bitcoin: '#f7931a',
-
         ethereum: '#627eea',
-
         tether: '#26a17b',
-
         binancecoin: '#f3ba2f',
-
         solana: '#00ffa3',
-
         ripple: '#23292f',
-
         cardano: '#0033ad',
-
         dogecoin: '#c2a633'
     };
 
 
     return colors[id] || '#888';
-}
-
-
-/* =====================================================
-   COIN CLASS
-===================================================== */
-
-function getCoinClass(id) {
-
-    const classes = {
-
-        bitcoin: 'bitcoin',
-
-        ethereum: 'ethereum',
-
-        tether: 'tether',
-
-        binancecoin: 'bnb',
-
-        solana: 'solana',
-
-        ripple: 'xrp'
-    };
-
-
-    return classes[id] || '';
 }
 
 
@@ -1462,11 +1519,15 @@ function renderTicker() {
 
 
     const items =
-        [...cryptoData, ...cryptoData];
+        [
+            ...cryptoData,
+            ...cryptoData
+        ];
 
 
     ticker.innerHTML =
-        items.map(c => `
+        items.map(
+            c => `
 
             <div class="ticker-item">
 
@@ -1475,7 +1536,9 @@ function renderTicker() {
                 </span>
 
                 <span class="value">
-                    $${formatNumber(c.price_usd)}
+                    $${formatNumber(
+                        c.price_usd
+                    )}
                 </span>
 
                 <span class="${
@@ -1514,18 +1577,8 @@ function renderCurrencyCards() {
         );
 
 
-    /*
-       خیلی مهم:
-       اینجا دیگر متغیری به نام tomanPrice نداریم.
-       چون tomanPrice یک تابع است.
-    */
-
-    const dollarPrice =
-        tgjuData.dollar
-            ? Number(
-                tgjuData.dollar.price
-            )
-            : 0;
+    const dollarTomanPrice =
+        getDollarTomanRate();
 
 
     const dollarChange =
@@ -1534,12 +1587,6 @@ function renderCurrencyCards() {
                 tgjuData.dollar.change || 0
             )
             : 0;
-
-
-    const dollarTomanPrice =
-        dollarPrice > 0
-            ? dollarPrice / 10
-            : CONFIG.DEFAULT_DOLLAR_TOMAN;
 
 
     const btcData =
@@ -1624,7 +1671,7 @@ function renderCurrencyCards() {
                 ${
                     tgjuData.dollar
                         ? 'قیمت بازار آزاد (TGJU)'
-                        : 'نرخ پیش‌فرض محاسبه تومان'
+                        : 'نرخ پیش‌فرض: ۲۲۳٬۰۰۰ تومان'
                 }
 
             </div>
@@ -1726,7 +1773,7 @@ function renderCurrencyCards() {
                             ? Math.abs(
                                 usdtData.change_24h
                             ).toFixed(2)
-                            : '0.01'
+                            : '0.00'
                     }%
 
                 </span>
@@ -1814,7 +1861,7 @@ function renderCurrencyCards() {
                         ? (
                             1 /
                             dollarTomanPrice
-                        ).toFixed(6)
+                        ).toFixed(8)
                         : '---'
                 }
 
@@ -1822,7 +1869,7 @@ function renderCurrencyCards() {
 
 
             <div class="price-toman">
-                هر تومان به دلار
+                ارزش هر تومان به دلار
             </div>
 
         </div>
@@ -1950,107 +1997,107 @@ function renderAIRecommendations() {
 
 
     const analyzed =
-        cryptoData.map(c => {
+        cryptoData.map(
+            c => {
 
-            const sparkline =
-                c.sparkline || [];
-
-
-            const trend =
-                sparkline.length > 1
-                    ? sparkline[
-                        sparkline.length - 1
-                    ] -
-                    sparkline[0]
-                    : 0;
+                const sparkline =
+                    c.sparkline || [];
 
 
-            const volatility =
-                sparkline.length > 1
-                    ? Math.max(
-                        ...sparkline
-                    ) -
+                const trend =
+                    sparkline.length > 1
+                        ? sparkline[
+                            sparkline.length - 1
+                        ] -
+                        sparkline[0]
+                        : 0;
+
+
+                const volatility =
+                    sparkline.length > 1
+                        ? Math.max(
+                            ...sparkline
+                        ) -
+                        Math.min(
+                            ...sparkline
+                        )
+                        : 1;
+
+
+                let score = 50;
+
+
+                if (volatility > 0) {
+
+                    score =
+                        50 +
+                        (
+                            trend /
+                            volatility
+                        ) *
+                        100 +
+                        c.change_24h * 2;
+
+                } else {
+
+                    score =
+                        50 +
+                        c.change_24h * 2;
+                }
+
+
+                score =
                     Math.min(
-                        ...sparkline
-                    )
-                    : 1;
+                        100,
+                        Math.max(
+                            0,
+                            score
+                        )
+                    );
 
 
-            let score = 50;
+                let action;
+                let reason;
 
 
-            if (volatility > 0) {
+                if (score > 70) {
 
-                score =
-                    50 +
-                    (
-                        trend /
-                        volatility
-                    ) *
-                    100 +
-                    c.change_24h * 2;
+                    action = 'buy';
 
-            } else {
+                    reason =
+                        `روند صعودی قوی با ${
+                            c.change_24h.toFixed(2)
+                        }% تغییر در ۲۴ ساعت گذشته.`;
 
-                score =
-                    50 +
-                    c.change_24h * 2;
+                } else if (score > 40) {
+
+                    action = 'hold';
+
+                    reason =
+                        `روند متعادل با نوسانات کنترل‌شده.`;
+
+                } else {
+
+                    action = 'sell';
+
+                    reason =
+                        `روند نزولی و فشار فروش بیشتر.`;
+                }
+
+
+                return {
+
+                    ...c,
+
+                    score:
+                        Math.round(score),
+
+                    action,
+                    reason
+                };
+
             }
-
-
-            score =
-                Math.min(
-                    100,
-                    Math.max(
-                        0,
-                        score
-                    )
-                );
-
-
-            let action;
-
-            let reason;
-
-
-            if (score > 70) {
-
-                action = 'buy';
-
-                reason =
-                    `روند صعودی قوی با ${
-                        c.change_24h.toFixed(2)
-                    }% تغییر در ۲۴ ساعت گذشته.`;
-
-            } else if (score > 40) {
-
-                action = 'hold';
-
-                reason =
-                    `روند متعادل با نوسانات کنترل‌شده.`;
-
-            } else {
-
-                action = 'sell';
-
-                reason =
-                    `روند نزولی و فشار فروش بیشتر.`;
-            }
-
-
-            return {
-
-                ...c,
-
-                score:
-                    Math.round(score),
-
-                action,
-
-                reason
-            };
-
-        }).sort(
+        ).sort(
             (a, b) =>
                 b.score - a.score
         );
@@ -2105,18 +2152,14 @@ function renderAIRecommendations() {
 
 
                     <div class="rec-score">
-
                         ${c.score}/100
-
                     </div>
 
                 </div>
 
 
                 <div class="rec-reason">
-
                     ${c.reason}
-
                 </div>
 
 
@@ -2203,19 +2246,20 @@ function renderTable() {
 
 
     tbody.innerHTML =
-        cryptoData.map(c => {
+        cryptoData.map(
+            c => {
 
-            const sparklineData =
-                c.sparkline || [];
-
-
-            const sparklineColor =
-                c.change_24h >= 0
-                    ? '#00ffa3'
-                    : '#ff4d4d';
+                const sparklineData =
+                    c.sparkline || [];
 
 
-            return `
+                const sparklineColor =
+                    c.change_24h >= 0
+                        ? '#00ffa3'
+                        : '#ff4d4d';
+
+
+                return `
 
                 <tr>
 
@@ -2331,9 +2375,9 @@ function renderTable() {
 
                 </tr>
 
-            `;
-
-        }).join('');
+                `;
+            }
+        ).join('');
 }
 
 
@@ -2344,11 +2388,8 @@ function renderTable() {
 function renderAll() {
 
     renderTicker();
-
     renderCurrencyCards();
-
     renderAIRecommendations();
-
     renderTable();
 }
 
@@ -2359,7 +2400,6 @@ function renderAll() {
 
 async function performUpdate() {
 
-    // جلوگیری از اجرای همزمان دو آپدیت
     if (updateRunning) {
         return;
     }
@@ -2396,12 +2436,6 @@ async function performUpdate() {
 
     try {
 
-        /*
-         * مهم:
-         * دلار و رمزارزها مستقل از هم دریافت می‌شوند.
-         * اگر TGJU خراب باشد CoinGecko همچنان کار می‌کند.
-         */
-
         const results =
             await Promise.allSettled([
 
@@ -2413,7 +2447,7 @@ async function performUpdate() {
 
 
         /* =========================
-           DOLLAR RESULT
+           DOLLAR
         ========================= */
 
         if (
@@ -2425,11 +2459,44 @@ async function performUpdate() {
             tgjuData.dollar =
                 results[0].value;
 
+        } else if (
+            !tgjuData.dollar
+        ) {
+
+            /*
+             * اگر دلار زنده دریافت نشد،
+             * نرخ 223000 تومان استفاده می‌شود.
+             */
+
+            tgjuData.dollar = {
+
+                price_rial:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                price_toman:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN,
+
+                change: 0,
+
+                low:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                high:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                source:
+                    'fallback',
+
+                time:
+                    formatTime(
+                        new Date()
+                    )
+            };
         }
 
 
         /* =========================
-           CRYPTO RESULT
+           CRYPTO
         ========================= */
 
         if (
@@ -2444,7 +2511,9 @@ async function performUpdate() {
             cryptoData =
                 results[1].value;
 
-        } else {
+        } else if (
+            !cryptoData.length
+        ) {
 
             throw new Error(
                 'دریافت قیمت رمزارزها ناموفق بود'
@@ -2467,7 +2536,11 @@ async function performUpdate() {
             'update-dot';
 
 
-        if (tgjuData.dollar) {
+        if (
+            tgjuData.dollar &&
+            tgjuData.dollar.source ===
+            'live'
+        ) {
 
             status.textContent =
                 formatTime(
@@ -2481,7 +2554,8 @@ async function performUpdate() {
                 formatTime(
                     new Date()
                 ) +
-                ' | رمزارز زنده / دلار پیش‌فرض';
+                ' | دلار پیش‌فرض';
+
         }
 
 
@@ -2497,12 +2571,15 @@ async function performUpdate() {
             'notification show';
 
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            notif.className =
-                'notification';
+                notif.className =
+                    'notification';
 
-        }, 3000);
+            },
+            3000
+        );
 
 
         /* =========================
@@ -2518,7 +2595,6 @@ async function performUpdate() {
             '✅ Prices updated:',
             new Date().toLocaleTimeString()
         );
-
 
     } catch (error) {
 
@@ -2544,21 +2620,50 @@ async function performUpdate() {
             'notification error show';
 
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            notif.className =
-                'notification';
+                notif.className =
+                    'notification';
 
-            notif.textContent =
-                '✅ داده‌ها با موفقیت به‌روزرسانی شدند!';
-
-        }, 3000);
+            },
+            3000
+        );
 
 
         /*
-         * اگر قبلاً داده داشتیم،
-         * همان داده قبلی را نگه می‌داریم.
+         * اگر دلار هم قبلاً نداشتیم،
+         * نرخ پیش‌فرض را فعال می‌کنیم.
          */
+
+        if (!tgjuData.dollar) {
+
+            tgjuData.dollar = {
+
+                price_rial:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                price_toman:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN,
+
+                change: 0,
+
+                low:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                high:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                source:
+                    'fallback',
+
+                time:
+                    formatTime(
+                        new Date()
+                    )
+            };
+        }
+
 
         if (cryptoData.length) {
 
@@ -2620,10 +2725,6 @@ function updateCountdown() {
         !updateRunning
     ) {
 
-        nextUpdateTime =
-            Date.now() +
-            CONFIG.UPDATE_INTERVAL;
-
         performUpdate();
     }
 }
@@ -2642,12 +2743,6 @@ async function init() {
 
     await performUpdate();
 
-
-    /*
-     * فقط یک تایمر داریم.
-     * هر 1 ثانیه شمارنده را چک می‌کند
-     * و بعد از 60 ثانیه قیمت‌ها را آپدیت می‌کند.
-     */
 
     setInterval(
         updateCountdown,
