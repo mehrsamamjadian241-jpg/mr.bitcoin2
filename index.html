@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mr. Bitcoin - داشبورد لحظه‌ای</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -54,7 +55,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(247, 147, 26, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(247, 147, 26, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
@@ -648,8 +649,14 @@
                 gap: 15px;
                 padding: 15px;
             }
-            .main { padding: 15px; }
-            .price-main { font-size: 1.5rem; }
+
+            .main {
+                padding: 15px;
+            }
+
+            .price-main {
+                font-size: 1.5rem;
+            }
         }
 
         ::-webkit-scrollbar {
@@ -667,7 +674,9 @@
         }
     </style>
 </head>
+
 <body>
+
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
 
@@ -678,58 +687,119 @@
     <header class="header">
         <div class="logo">
             <div class="logo-icon">₿</div>
+
             <div class="logo-text">
                 <h1>Mr. Bitcoin</h1>
                 <span>داشبورد حرفه‌ای رمزارز و ارز | ساخته شده توسط mehrsam</span>
             </div>
         </div>
+
         <div class="header-info">
             <div class="last-update">
                 <span class="update-dot loading" id="updateDot"></span>
-                <span id="lastUpdate">در حال دریافت از TGJU...</span>
+                <span id="lastUpdate">در حال دریافت قیمت‌ها...</span>
             </div>
+
             <div class="countdown">
                 <span>بروزرسانی بعدی:</span>
-                <span class="countdown-number" id="countdown">60:00</span>
+                <span class="countdown-number" id="countdown">01:00</span>
             </div>
         </div>
     </header>
 
     <main class="main">
+
         <section class="currency-section">
+
             <h2 class="section-title">قیمت لحظه‌ای ارزها (از TGJU)</h2>
+
             <div class="tgju-source">
-                📡 منبع: <a href="https://www.tgju.org" target="_blank" style="color: #4dabf7; text-decoration: none;">TGJU.org</a>
+                📡 منبع:
+                <a href="https://www.tgju.org"
+                   target="_blank"
+                   style="color: #4dabf7; text-decoration: none;">
+                    TGJU.org
+                </a>
             </div>
+
             <div class="proxy-info">
                 ⚡ از CORS Proxy رایگان برای دسترسی به TGJU استفاده می‌شود
             </div>
-            <div class="currency-grid" id="currencyGrid" style="margin-top: 20px;">
-                <div class="currency-card"><div class="loading-skeleton" style="height: 100px;"></div></div>
-                <div class="currency-card"><div class="loading-skeleton" style="height: 100px;"></div></div>
-                <div class="currency-card"><div class="loading-skeleton" style="height: 100px;"></div></div>
-                <div class="currency-card"><div class="loading-skeleton" style="height: 100px;"></div></div>
+
+            <div class="currency-grid"
+                 id="currencyGrid"
+                 style="margin-top: 20px;">
+
+                <div class="currency-card">
+                    <div class="loading-skeleton" style="height: 100px;"></div>
+                </div>
+
+                <div class="currency-card">
+                    <div class="loading-skeleton" style="height: 100px;"></div>
+                </div>
+
+                <div class="currency-card">
+                    <div class="loading-skeleton" style="height: 100px;"></div>
+                </div>
+
+                <div class="currency-card">
+                    <div class="loading-skeleton" style="height: 100px;"></div>
+                </div>
+
             </div>
         </section>
+
 
         <section class="ai-section">
+
             <div class="ai-header">
+
                 <div class="ai-icon">🤖</div>
+
                 <div class="ai-title">
                     <h2>هوش مصنوعی Mr. Bitcoin</h2>
-                    <p>تحلیل و پیش‌بینی هر ۱ ساعت - آخرین بروزرسانی: <span id="aiUpdateTime">--:--</span></p>
+
+                    <p>
+                        تحلیل و پیش‌بینی هر ۱ ساعت -
+                        آخرین بروزرسانی:
+                        <span id="aiUpdateTime">--:--</span>
+                    </p>
                 </div>
+
             </div>
-            <div class="ai-recommendations" id="aiRecommendations">
-                <div class="rec-card"><div class="loading-skeleton" style="height: 80px;"></div></div>
-                <div class="rec-card"><div class="loading-skeleton" style="height: 80px;"></div></div>
-                <div class="rec-card"><div class="loading-skeleton" style="height: 80px;"></div></div>
+
+            <div class="ai-recommendations"
+                 id="aiRecommendations">
+
+                <div class="rec-card">
+                    <div class="loading-skeleton"
+                         style="height: 80px;"></div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="loading-skeleton"
+                         style="height: 80px;"></div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="loading-skeleton"
+                         style="height: 80px;"></div>
+                </div>
+
             </div>
+
         </section>
 
+
         <section class="table-section">
-            <h2 class="section-title" style="margin-bottom: 20px;">جدول کامل رمزارزها</h2>
+
+            <h2 class="section-title"
+                style="margin-bottom: 20px;">
+                جدول کامل رمزارزها
+            </h2>
+
             <table class="crypto-table">
+
                 <thead>
                     <tr>
                         <th>نام</th>
@@ -740,711 +810,1864 @@
                         <th>حجم بازار</th>
                     </tr>
                 </thead>
+
                 <tbody id="cryptoTableBody">
-                    <tr><td colspan="6"><div class="loading-skeleton" style="height: 40px;"></div></td></tr>
+
+                    <tr>
+                        <td colspan="6">
+                            <div class="loading-skeleton"
+                                 style="height: 40px;"></div>
+                        </td>
+                    </tr>
+
                 </tbody>
+
             </table>
+
         </section>
+
     </main>
 
+
     <footer class="footer">
-        <p>تمامی حقوق محفوظ است | Mr. Bitcoin | ساخته شده با ❤️ توسط <strong>mehrsam</strong></p>
-        <p style="margin-top: 10px; font-size: 0.75rem;">
-            📡 داده‌ها از <a href="https://www.tgju.org" target="_blank" style="color: #4dabf7;">TGJU.org</a> (با CORS Proxy) و <a href="https://www.coingecko.com" target="_blank" style="color: #4dabf7;">CoinGecko</a> دریافت می‌شوند.
+
+        <p>
+            تمامی حقوق محفوظ است |
+            Mr. Bitcoin |
+            ساخته شده با ❤️ توسط
+            <strong>mehrsam</strong>
         </p>
+
+        <p style="margin-top: 10px; font-size: 0.75rem;">
+
+            📡 داده‌ها از
+
+            <a href="https://www.tgju.org"
+               target="_blank"
+               style="color: #4dabf7;">
+                TGJU.org
+            </a>
+
+            و
+
+            <a href="https://www.coingecko.com"
+               target="_blank"
+               style="color: #4dabf7;">
+                CoinGecko
+            </a>
+
+            دریافت می‌شوند.
+
+        </p>
+
     </footer>
 
-    <div class="notification" id="notification">✅ داده‌ها با موفقیت به‌روزرسانی شدند!</div>
 
-    <script>
-        // ============================================
-        // CORS PROXY CONFIGURATION
-        // ============================================
-        
-        // لیست پروکسی‌های رایگان (به ترتیب اولویت)
-        const CORS_PROXIES = [
-            'https://api.cors.syrins.tech/?url=',           // Unlimited, SSRF protected
-            'https://corsproxy.io/?url=',                    // Free for dev
-            'https://api.cors.lol/?url=',                    // Unlimited
-            'https://cors.dev/',                             // Simple
-            'https://cors-anywhere.com/',                     // Community hosted
-            'https://proxy.killcors.com?url='                // No rate limit
-        ];
+    <div class="notification"
+         id="notification">
+        ✅ داده‌ها با موفقیت به‌روزرسانی شدند!
+    </div>
 
-        // انتخاب پروکسی فعال (اولی رو تست می‌کنیم)
-        let ACTIVE_PROXY = CORS_PROXIES[0];
 
-        const API = {
-            // TGJU - با پروکسی
-            TGJU_PROFILE: 'https://www.tgju.org/profile',
-            TGJU_CURRENCY: 'https://www.tgju.org/currency',
-            
-            // APIهای جایگزین TGJU
-            TGJU_API_GO: 'https://tgju-api-go.vercel.app/api/price',
-            
-            // CoinGecko - نیازی به پروکسی نداره (CORS فعال داره)
-            COINGECKO: 'https://api.coingecko.com/api/v3',
-            
-            // APIهای داخلی ایران
-            BRSAPI: 'https://api.brsapi.ir'
-        };
+<script>
 
-        const CONFIG = {
-            UPDATE_INTERVAL: 60 * 60 * 1000, // 1 ساعت
-            RETRY_INTERVAL: 30 * 1000, // 30 ثانیه
-            DOLLAR_RATE: null,
-            PROXY_INDEX: 0
-        };
+/* =====================================================
+   API
+===================================================== */
 
-        let cryptoData = [];
-        let tgjuData = {
-            dollar: null,
-            euro: null,
-            gold: null,
-            coin: null,
-            tether: null,
-            bitcoin: null
-        };
-        let nextUpdateTime = Date.now() + CONFIG.UPDATE_INTERVAL;
-        let countdownInterval;
+const API = {
 
-        // ============================================
-        // UTILITY FUNCTIONS
-        // ============================================
-        function formatNumber(num) {
-            if (!num || isNaN(num)) return '---';
-            return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(num);
+    TGJU_API_GO:
+        'https://tgju-api-go.vercel.app/api/price',
+
+    COINGECKO:
+        'https://api.coingecko.com/api/v3'
+};
+
+
+/* =====================================================
+   CONFIG
+===================================================== */
+
+const CONFIG = {
+
+    // دقیقاً 60 ثانیه
+    UPDATE_INTERVAL: 60 * 1000,
+
+    // اگر دلار دریافت نشد،
+    // فقط برای محاسبه تقریبی تومان استفاده می‌شود.
+    DEFAULT_DOLLAR_TOMAN: 85000
+};
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let cryptoData = [];
+
+let tgjuData = {
+
+    dollar: null,
+
+    euro: null,
+
+    gold: null,
+
+    coin: null,
+
+    tether: null,
+
+    bitcoin: null
+};
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+let nextUpdateTime =
+    Date.now() + CONFIG.UPDATE_INTERVAL;
+
+let updateRunning = false;
+
+
+/* =====================================================
+   FORMAT FUNCTIONS
+===================================================== */
+
+function formatNumber(num) {
+
+    if (
+        num === null ||
+        num === undefined ||
+        isNaN(num)
+    ) {
+        return '---';
+    }
+
+    return new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: 2
+    }).format(num);
+}
+
+
+function formatToman(num) {
+
+    if (
+        num === null ||
+        num === undefined ||
+        isNaN(num)
+    ) {
+        return '---';
+    }
+
+    return new Intl.NumberFormat('fa-IR').format(
+        Math.round(num)
+    );
+}
+
+
+function formatTime(date) {
+
+    return new Date(date).toLocaleTimeString(
+        'fa-IR',
+        {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
         }
+    );
+}
 
-        function formatToman(num) {
-            if (!num || isNaN(num)) return '---';
-            return new Intl.NumberFormat('fa-IR').format(Math.round(num));
+
+/* =====================================================
+   DOLLAR RATE
+===================================================== */
+
+function getDollarTomanRate() {
+
+    if (
+        tgjuData.dollar &&
+        tgjuData.dollar.price &&
+        !isNaN(tgjuData.dollar.price)
+    ) {
+
+        // TGJU معمولاً ریال می‌دهد
+        // تبدیل ریال به تومان
+        return tgjuData.dollar.price / 10;
+    }
+
+    return CONFIG.DEFAULT_DOLLAR_TOMAN;
+}
+
+
+/* =====================================================
+   USD -> TOMAN
+===================================================== */
+
+function tomanPrice(usdPrice) {
+
+    if (
+        usdPrice === null ||
+        usdPrice === undefined ||
+        isNaN(usdPrice)
+    ) {
+        return 0;
+    }
+
+    return usdPrice * getDollarTomanRate();
+}
+
+
+/* =====================================================
+   SPARKLINE
+===================================================== */
+
+function createSparkline(data, color) {
+
+    if (!data || data.length < 2) {
+        return '';
+    }
+
+    const validData = data.filter(
+        v =>
+            v !== null &&
+            v !== undefined &&
+            !isNaN(v)
+    );
+
+    if (validData.length < 2) {
+        return '';
+    }
+
+    const min = Math.min(...validData);
+
+    const max = Math.max(...validData);
+
+    const range = max - min || 1;
+
+    const width = 100;
+
+    const height = 30;
+
+    const points = validData.map(
+        (v, i) => {
+
+            const x =
+                (i / (validData.length - 1)) *
+                width;
+
+            const y =
+                height -
+                ((v - min) / range) *
+                height;
+
+            return `${x},${y}`;
         }
+    ).join(' ');
 
-        function formatTime(date) {
-            return new Date(date).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }
 
-        function tomanPrice(usdPrice) {
-            const rate = tgjuData.dollar ? tgjuData.dollar.price / 10 : 85000;
-            return usdPrice * rate;
-        }
+    const lastY =
+        height -
+        (
+            (validData[validData.length - 1] - min)
+            / range
+        ) *
+        height;
 
-        function createSparkline(data, color) {
-            if (!data || data.length < 2) return '';
-            const validData = data.filter(v => v !== null && v !== undefined);
-            if (validData.length < 2) return '';
-            
-            const min = Math.min(...validData);
-            const max = Math.max(...validData);
-            const range = max - min || 1;
-            const width = 100;
-            const height = 30;
-            
-            const points = validData.map((v, i) => {
-                const x = (i / (validData.length - 1)) * width;
-                const y = height - ((v - min) / range) * height;
-                return `${x},${y}`;
-            }).join(' ');
-            
-            const lastY = height - ((validData[validData.length - 1] - min) / range) * height;
-            
-            return `<svg class="sparkline" viewBox="0 0 100 30" preserveAspectRatio="none">
-                <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="100" cy="${lastY}" r="3" fill="${color}"/>
-            </svg>`;
-        }
 
-        // ============================================
-        // CORS PROXY FUNCTIONS
-        // ============================================
-        
-        // ساخت URL با پروکسی
-        function proxyUrl(url) {
-            // اگر URL از قبل پروکسی شده، دوباره پروکسی نکن
-            if (url.includes('cors') || url.includes('proxy')) {
-                return url;
+    return `
+        <svg
+            class="sparkline"
+            viewBox="0 0 100 30"
+            preserveAspectRatio="none"
+        >
+
+            <polyline
+                points="${points}"
+                fill="none"
+                stroke="${color}"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+            <circle
+                cx="100"
+                cy="${lastY}"
+                r="3"
+                fill="${color}"
+            />
+
+        </svg>
+    `;
+}
+
+
+/* =====================================================
+   TGJU DOLLAR
+===================================================== */
+
+async function fetchTgjuDollar() {
+
+    try {
+
+        const response = await fetch(
+            API.TGJU_API_GO + '/currency',
+            {
+                method: 'GET',
+                signal: AbortSignal.timeout(10000)
             }
-            return ACTIVE_PROXY + encodeURIComponent(url);
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `TGJU API HTTP ${response.status}`
+            );
         }
 
-        // تست پروکسی
-        async function testProxy(proxyUrl) {
-            try {
-                const testUrl = proxyUrl + encodeURIComponent('https://www.tgju.org/profile/price_dollar_rl');
-                const response = await fetch(testUrl, { 
-                    method: 'HEAD',
-                    signal: AbortSignal.timeout(5000)
-                });
-                return response.ok;
-            } catch (e) {
-                return false;
-            }
-        }
 
-        // پیدا کردن پروکسی کارا
-        async function findWorkingProxy() {
-            for (let i = 0; i < CORS_PROXIES.length; i++) {
-                ACTIVE_PROXY = CORS_PROXIES[i];
-                console.log(`Testing proxy: ${ACTIVE_PROXY}`);
-                
-                if (await testProxy(ACTIVE_PROXY)) {
-                    console.log(`✅ Proxy working: ${ACTIVE_PROXY}`);
-                    CONFIG.PROXY_INDEX = i;
-                    return true;
-                }
-            }
-            return false;
-        }
+        const data =
+            await response.json();
 
-        // ============================================
-        // TGJU FETCH FUNCTIONS (با پروکسی)
-        // ============================================
-        
-        // 1. دریافت قیمت دلار از TGJU
-        async function fetchTgjuDollar() {
-            const urls = [
-                'https://www.tgju.org/profile/price_dollar_rl',
-                'https://www.tgju.org/profile/price_dollar',
-                'https://www.tgju.org/sanarate-service/1000'
-            ];
 
-            for (const url of urls) {
-                try {
-                    const response = await fetch(proxyUrl(url), {
-                        method: 'GET',
-                        headers: { 
-                            'Accept': 'text/html,application/json',
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                        },
-                        signal: AbortSignal.timeout(10000)
-                    });
-                    
-                    if (response.ok) {
-                        const html = await response.text();
-                        const price = extractTgjuPrice(html);
-                        if (price) {
-                            return {
-                                price: price,
-                                change: 0,
-                                low: price * 0.99,
-                                high: price * 1.01,
-                                time: new Date().toLocaleTimeString('fa-IR')
-                            };
-                        }
-                    }
-                } catch (e) {
-                    console.log(`Failed to fetch ${url}:`, e.message);
-                }
-            }
+        if (
+            data &&
+            Array.isArray(data.items)
+        ) {
 
-            // روش جایگزین: tgju-api-go
-            try {
-                const response = await fetch('https://tgju-api-go.vercel.app/api/price/currency', {
-                    signal: AbortSignal.timeout(10000)
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.items) {
-                        const dollar = data.items.find(i => i.key === 'price_dollar_rl');
-                        if (dollar) {
-                            return {
-                                price: parseFloat(dollar.price.value),
-                                change: parseFloat(dollar.change.percent),
-                                low: parseFloat(dollar.low.value),
-                                high: parseFloat(dollar.high.value),
-                                time: dollar.time
-                            };
-                        }
-                    }
-                }
-            } catch (e) {
-                console.log('tgju-api-go failed:', e);
-            }
-
-            return null;
-        }
-
-        // استخراج قیمت از HTML TGJU
-        function extractTgjuPrice(html) {
-            // روش 1: جستجوی JSON-LD
-            const jsonLdMatch = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s);
-            if (jsonLdMatch) {
-                try {
-                    const json = JSON.parse(jsonLdMatch[1]);
-                    if (json.price) return parseFloat(json.price);
-                } catch (e) {}
-            }
-
-            // روش 2: جستجوی meta tag
-            const metaMatch = html.match(/<meta[^>]*price[^>]*content="([^"]*)"/i);
-            if (metaMatch) {
-                const price = parseFloat(metaMatch[1].replace(/,/g, ''));
-                if (!isNaN(price)) return price;
-            }
-
-            // روش 3: جستجوی عدد در HTML
-            const priceMatches = html.match(/(\d{1,3}(,\d{3})+(\.\d+)?)/g);
-            if (priceMatches) {
-                for (const match of priceMatches) {
-                    const price = parseFloat(match.replace(/,/g, ''));
-                    if (price > 100000 && price < 500000) { // محدوده قیمت دلار
-                        return price;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        // 2. دریافت قیمت رمزارزها از TGJU
-        async function fetchTgjuCrypto() {
-            const cryptoUrls = [
-                'https://www.tgju.org/profile/crypto-bitcoin',
-                'https://www.tgju.org/profile/crypto-tether'
-            ];
-
-            for (const url of cryptoUrls) {
-                try {
-                    const response = await fetch(proxyUrl(url), {
-                        method: 'GET',
-                        headers: { 'Accept': 'text/html' },
-                        signal: AbortSignal.timeout(10000)
-                    });
-                    
-                    if (response.ok) {
-                        const html = await response.text();
-                        // استخراج قیمت از HTML
-                    }
-                } catch (e) {
-                    console.log('TGJU crypto fetch failed:', e);
-                }
-            }
-            return null;
-        }
-
-        // 3. دریافت قیمت رمزارزها از CoinGecko
-        async function fetchCryptoPrices() {
-            const coins = 'bitcoin,ethereum,tether,binancecoin,solana,ripple,cardano,dogecoin';
-            
-            try {
-                const response = await fetch(
-                    `${API.COINGECKO}/coins/markets?vs_currency=usd&ids=${coins}&order=market_cap_desc&sparkline=true&price_change_percentage=24h&include_24hr_vol=true`,
-                    { signal: AbortSignal.timeout(10000) }
+            const dollar =
+                data.items.find(
+                    item =>
+                        item.key ===
+                        'price_dollar_rl'
                 );
-                
-                if (!response.ok) throw new Error(`CoinGecko error: ${response.status}`);
-                
-                const data = await response.json();
-                return data.map(coin => ({
-                    id: coin.id,
-                    name: coin.name,
-                    symbol: coin.symbol.toUpperCase(),
-                    price_usd: coin.current_price,
-                    change_24h: coin.price_change_percentage_24h || 0,
-                    volume: coin.total_volume ? formatVolume(coin.total_volume) : '---',
-                    icon: getCoinIcon(coin.symbol),
-                    color: getCoinColor(coin.id),
-                    sparkline: coin.sparkline_in_7d?.price?.slice(-7) || []
-                }));
-            } catch (error) {
-                console.error('CoinGecko fetch failed:', error);
-                throw error;
+
+
+            if (dollar) {
+
+                const price =
+                    parseFloat(
+                        String(dollar.price?.value || '')
+                        .replace(/,/g, '')
+                        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    );
+
+
+                const change =
+                    parseFloat(
+                        String(dollar.change?.percent || 0)
+                        .replace(/,/g, '')
+                    );
+
+
+                const low =
+                    parseFloat(
+                        String(dollar.low?.value || price)
+                        .replace(/,/g, '')
+                    );
+
+
+                const high =
+                    parseFloat(
+                        String(dollar.high?.value || price)
+                        .replace(/,/g, '')
+                    );
+
+
+                if (!isNaN(price)) {
+
+                    return {
+
+                        price: price,
+
+                        change:
+                            isNaN(change)
+                                ? 0
+                                : change,
+
+                        low:
+                            isNaN(low)
+                                ? price
+                                : low,
+
+                        high:
+                            isNaN(high)
+                                ? price
+                                : high,
+
+                        time:
+                            dollar.time ||
+                            formatTime(new Date())
+                    };
+                }
             }
         }
 
-        function formatVolume(vol) {
-            if (vol >= 1e9) return `$${(vol / 1e9).toFixed(2)}B`;
-            if (vol >= 1e6) return `$${(vol / 1e6).toFixed(2)}M`;
-            if (vol >= 1e3) return `$${(vol / 1e3).toFixed(2)}K`;
-            return `$${vol}`;
-        }
+    } catch (error) {
 
-        function getCoinIcon(symbol) {
-            const icons = {
-                btc: '₿', eth: 'Ξ', usdt: '₮', bnb: 'B', sol: '◎', 
-                xrp: '✕', ada: '₳', doge: 'Ð'
+        console.warn(
+            'TGJU API failed:',
+            error
+        );
+    }
+
+
+    return null;
+}
+
+
+/* =====================================================
+   COINGECKO
+===================================================== */
+
+async function fetchCryptoPrices() {
+
+    const coins =
+        'bitcoin,ethereum,tether,binancecoin,solana,ripple,cardano,dogecoin';
+
+
+    const url =
+        `${API.COINGECKO}/coins/markets` +
+        `?vs_currency=usd` +
+        `&ids=${coins}` +
+        `&order=market_cap_desc` +
+        `&sparkline=true` +
+        `&price_change_percentage=24h` +
+        `&include_24hr_vol=true`;
+
+
+    const response =
+        await fetch(
+            url,
+            {
+                method: 'GET',
+                headers: {
+                    'Accept':
+                        'application/json'
+                },
+                signal:
+                    AbortSignal.timeout(15000)
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            `CoinGecko HTTP ${response.status}`
+        );
+    }
+
+
+    const data =
+        await response.json();
+
+
+    if (
+        !Array.isArray(data) ||
+        data.length === 0
+    ) {
+
+        throw new Error(
+            'CoinGecko returned empty data'
+        );
+    }
+
+
+    return data.map(coin => ({
+
+        id:
+            coin.id,
+
+        name:
+            coin.name,
+
+        symbol:
+            String(
+                coin.symbol || ''
+            ).toUpperCase(),
+
+        price_usd:
+            Number(
+                coin.current_price
+            ),
+
+        change_24h:
+            Number(
+                coin.price_change_percentage_24h || 0
+            ),
+
+        volume:
+            coin.total_volume
+                ? formatVolume(
+                    coin.total_volume
+                )
+                : '---',
+
+        icon:
+            getCoinIcon(
+                coin.symbol
+            ),
+
+        color:
+            getCoinColor(
+                coin.id
+            ),
+
+        sparkline:
+            coin.sparkline_in_7d &&
+            Array.isArray(
+                coin.sparkline_in_7d.price
+            )
+                ? coin.sparkline_in_7d.price
+                : []
+
+    }));
+}
+
+
+/* =====================================================
+   VOLUME
+===================================================== */
+
+function formatVolume(vol) {
+
+    if (!vol || isNaN(vol)) {
+        return '---';
+    }
+
+    if (vol >= 1e9) {
+        return `$${(vol / 1e9).toFixed(2)}B`;
+    }
+
+    if (vol >= 1e6) {
+        return `$${(vol / 1e6).toFixed(2)}M`;
+    }
+
+    if (vol >= 1e3) {
+        return `$${(vol / 1e3).toFixed(2)}K`;
+    }
+
+    return `$${vol}`;
+}
+
+
+/* =====================================================
+   COIN ICON
+===================================================== */
+
+function getCoinIcon(symbol) {
+
+    const icons = {
+
+        btc: '₿',
+
+        eth: 'Ξ',
+
+        usdt: '₮',
+
+        bnb: 'B',
+
+        sol: '◎',
+
+        xrp: '✕',
+
+        ada: '₳',
+
+        doge: 'Ð'
+    };
+
+
+    return icons[
+        String(symbol || '').toLowerCase()
+    ] || '◈';
+}
+
+
+/* =====================================================
+   COIN COLOR
+===================================================== */
+
+function getCoinColor(id) {
+
+    const colors = {
+
+        bitcoin: '#f7931a',
+
+        ethereum: '#627eea',
+
+        tether: '#26a17b',
+
+        binancecoin: '#f3ba2f',
+
+        solana: '#00ffa3',
+
+        ripple: '#23292f',
+
+        cardano: '#0033ad',
+
+        dogecoin: '#c2a633'
+    };
+
+
+    return colors[id] || '#888';
+}
+
+
+/* =====================================================
+   COIN CLASS
+===================================================== */
+
+function getCoinClass(id) {
+
+    const classes = {
+
+        bitcoin: 'bitcoin',
+
+        ethereum: 'ethereum',
+
+        tether: 'tether',
+
+        binancecoin: 'bnb',
+
+        solana: 'solana',
+
+        ripple: 'xrp'
+    };
+
+
+    return classes[id] || '';
+}
+
+
+/* =====================================================
+   TICKER
+===================================================== */
+
+function renderTicker() {
+
+    const ticker =
+        document.getElementById(
+            'ticker'
+        );
+
+
+    if (!cryptoData.length) {
+        return;
+    }
+
+
+    const items =
+        [...cryptoData, ...cryptoData];
+
+
+    ticker.innerHTML =
+        items.map(c => `
+
+            <div class="ticker-item">
+
+                <span class="symbol">
+                    ${c.symbol}/USD
+                </span>
+
+                <span class="value">
+                    $${formatNumber(c.price_usd)}
+                </span>
+
+                <span class="${
+                    c.change_24h >= 0
+                        ? 'change-up'
+                        : 'change-down'
+                }">
+
+                    ${
+                        c.change_24h >= 0
+                            ? '▲'
+                            : '▼'
+                    }
+
+                    ${Math.abs(
+                        c.change_24h
+                    ).toFixed(2)}%
+
+                </span>
+
+            </div>
+
+        `).join('');
+}
+
+
+/* =====================================================
+   CURRENCY CARDS
+===================================================== */
+
+function renderCurrencyCards() {
+
+    const grid =
+        document.getElementById(
+            'currencyGrid'
+        );
+
+
+    /*
+       خیلی مهم:
+       اینجا دیگر متغیری به نام tomanPrice نداریم.
+       چون tomanPrice یک تابع است.
+    */
+
+    const dollarPrice =
+        tgjuData.dollar
+            ? Number(
+                tgjuData.dollar.price
+            )
+            : 0;
+
+
+    const dollarChange =
+        tgjuData.dollar
+            ? Number(
+                tgjuData.dollar.change || 0
+            )
+            : 0;
+
+
+    const dollarTomanPrice =
+        dollarPrice > 0
+            ? dollarPrice / 10
+            : CONFIG.DEFAULT_DOLLAR_TOMAN;
+
+
+    const btcData =
+        cryptoData.find(
+            c =>
+                c.id === 'bitcoin'
+        );
+
+
+    const usdtData =
+        cryptoData.find(
+            c =>
+                c.id === 'tether'
+        );
+
+
+    /* =========================
+       DOLLAR
+    ========================= */
+
+    const dollarCard = `
+
+        <div class="currency-card">
+
+            <div class="card-header">
+
+                <div class="coin-info">
+
+                    <div class="coin-icon dollar">
+                        💵
+                    </div>
+
+                    <div>
+
+                        <div class="coin-name">
+                            دلار آمریکا
+                        </div>
+
+                        <div class="coin-symbol">
+                            USD
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <span class="change-badge ${
+                    dollarChange >= 0
+                        ? 'positive'
+                        : 'negative'
+                }">
+
+                    ${
+                        dollarChange >= 0
+                            ? '▲'
+                            : '▼'
+                    }
+
+                    ${Math.abs(
+                        dollarChange
+                    ).toFixed(2)}%
+
+                </span>
+
+            </div>
+
+
+            <div class="price-main">
+
+                ${formatToman(
+                    dollarTomanPrice
+                )}
+
+                تومان
+
+            </div>
+
+
+            <div class="price-toman">
+
+                ${
+                    tgjuData.dollar
+                        ? 'قیمت بازار آزاد (TGJU)'
+                        : 'نرخ پیش‌فرض محاسبه تومان'
+                }
+
+            </div>
+
+
+            ${
+                tgjuData.dollar
+                    ? `
+
+                    <div style="
+                        font-size: 0.75rem;
+                        color: rgba(255,255,255,0.4);
+                        margin-top: 8px;
+                    ">
+
+                        کمترین:
+                        ${formatToman(
+                            tgjuData.dollar.low / 10
+                        )}
+
+                        |
+
+                        بیشترین:
+                        ${formatToman(
+                            tgjuData.dollar.high / 10
+                        )}
+
+                    </div>
+
+                    `
+                    : ''
+            }
+
+        </div>
+    `;
+
+
+    /* =========================
+       TETHER
+    ========================= */
+
+    const usdtUsd =
+        usdtData
+            ? Number(
+                usdtData.price_usd
+            )
+            : 1;
+
+
+    const usdtToman =
+        tomanPrice(
+            usdtUsd
+        );
+
+
+    const tetherCard = `
+
+        <div class="currency-card">
+
+            <div class="card-header">
+
+                <div class="coin-info">
+
+                    <div class="coin-icon tether">
+                        ₮
+                    </div>
+
+                    <div>
+
+                        <div class="coin-name">
+                            تتر (Tether)
+                        </div>
+
+                        <div class="coin-symbol">
+                            USDT
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <span class="change-badge ${
+                    usdtData &&
+                    usdtData.change_24h < 0
+                        ? 'negative'
+                        : 'positive'
+                }">
+
+                    ${
+                        usdtData &&
+                        usdtData.change_24h < 0
+                            ? '▼'
+                            : '▲'
+                    }
+
+                    ${
+                        usdtData
+                            ? Math.abs(
+                                usdtData.change_24h
+                            ).toFixed(2)
+                            : '0.01'
+                    }%
+
+                </span>
+
+            </div>
+
+
+            <div class="price-main">
+
+                ${formatToman(
+                    usdtToman
+                )}
+
+                تومان
+
+            </div>
+
+
+            <div class="price-toman">
+                قیمت تقریبی تتر بر اساس نرخ دلار
+            </div>
+
+        </div>
+    `;
+
+
+    /* =========================
+       TOMAN
+    ========================= */
+
+    const tomanCard = `
+
+        <div class="currency-card">
+
+            <div class="card-header">
+
+                <div class="coin-info">
+
+                    <div class="coin-icon toman">
+                        💴
+                    </div>
+
+                    <div>
+
+                        <div class="coin-name">
+                            تومان ایران
+                        </div>
+
+                        <div class="coin-symbol">
+                            IRT
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <span class="change-badge ${
+                    dollarChange >= 0
+                        ? 'negative'
+                        : 'positive'
+                }">
+
+                    ${
+                        dollarChange >= 0
+                            ? '▼'
+                            : '▲'
+                    }
+
+                    ${Math.abs(
+                        dollarChange
+                    ).toFixed(2)}%
+
+                </span>
+
+            </div>
+
+
+            <div class="price-main">
+
+                $
+
+                ${
+                    dollarTomanPrice > 0
+                        ? (
+                            1 /
+                            dollarTomanPrice
+                        ).toFixed(6)
+                        : '---'
+                }
+
+            </div>
+
+
+            <div class="price-toman">
+                هر تومان به دلار
+            </div>
+
+        </div>
+    `;
+
+
+    /* =========================
+       BITCOIN
+    ========================= */
+
+    const btcCard = `
+
+        <div class="currency-card">
+
+            <div class="card-header">
+
+                <div class="coin-info">
+
+                    <div class="coin-icon bitcoin">
+                        ₿
+                    </div>
+
+                    <div>
+
+                        <div class="coin-name">
+                            Bitcoin
+                        </div>
+
+                        <div class="coin-symbol">
+                            BTC
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                ${
+                    btcData
+                        ? `
+
+                        <span class="change-badge ${
+                            btcData.change_24h >= 0
+                                ? 'positive'
+                                : 'negative'
+                        }">
+
+                            ${
+                                btcData.change_24h >= 0
+                                    ? '▲'
+                                    : '▼'
+                            }
+
+                            ${Math.abs(
+                                btcData.change_24h
+                            ).toFixed(2)}%
+
+                        </span>
+
+                        `
+                        : ''
+                }
+
+            </div>
+
+
+            <div class="price-main">
+
+                $
+
+                ${
+                    btcData
+                        ? formatNumber(
+                            btcData.price_usd
+                        )
+                        : '---'
+                }
+
+            </div>
+
+
+            <div class="price-toman">
+
+                ${
+                    btcData
+                        ? formatToman(
+                            tomanPrice(
+                                btcData.price_usd
+                            )
+                        )
+                        : '---'
+                }
+
+                تومان
+
+            </div>
+
+        </div>
+    `;
+
+
+    grid.innerHTML =
+        dollarCard +
+        tetherCard +
+        tomanCard +
+        btcCard;
+}
+
+
+/* =====================================================
+   AI
+===================================================== */
+
+function renderAIRecommendations() {
+
+    const container =
+        document.getElementById(
+            'aiRecommendations'
+        );
+
+
+    if (!cryptoData.length) {
+        return;
+    }
+
+
+    const analyzed =
+        cryptoData.map(c => {
+
+            const sparkline =
+                c.sparkline || [];
+
+
+            const trend =
+                sparkline.length > 1
+                    ? sparkline[
+                        sparkline.length - 1
+                    ] -
+                    sparkline[0]
+                    : 0;
+
+
+            const volatility =
+                sparkline.length > 1
+                    ? Math.max(
+                        ...sparkline
+                    ) -
+                    Math.min(
+                        ...sparkline
+                    )
+                    : 1;
+
+
+            let score = 50;
+
+
+            if (volatility > 0) {
+
+                score =
+                    50 +
+                    (
+                        trend /
+                        volatility
+                    ) *
+                    100 +
+                    c.change_24h * 2;
+
+            } else {
+
+                score =
+                    50 +
+                    c.change_24h * 2;
+            }
+
+
+            score =
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        score
+                    )
+                );
+
+
+            let action;
+
+            let reason;
+
+
+            if (score > 70) {
+
+                action = 'buy';
+
+                reason =
+                    `روند صعودی قوی با ${
+                        c.change_24h.toFixed(2)
+                    }% تغییر در ۲۴ ساعت گذشته.`;
+
+            } else if (score > 40) {
+
+                action = 'hold';
+
+                reason =
+                    `روند متعادل با نوسانات کنترل‌شده.`;
+
+            } else {
+
+                action = 'sell';
+
+                reason =
+                    `روند نزولی و فشار فروش بیشتر.`;
+            }
+
+
+            return {
+
+                ...c,
+
+                score:
+                    Math.round(score),
+
+                action,
+
+                reason
             };
-            return icons[symbol.toLowerCase()] || '◈';
-        }
 
-        function getCoinColor(id) {
-            const colors = {
-                bitcoin: '#f7931a', ethereum: '#627eea', tether: '#26a17b',
-                binancecoin: '#f3ba2f', solana: '#00ffa3', ripple: '#23292f',
-                cardano: '#0033ad', dogecoin: '#c2a633'
-            };
-            return colors[id] || '#888';
-        }
+        }).sort(
+            (a, b) =>
+                b.score - a.score
+        );
 
-        function getCoinClass(id) {
-            const classes = {
-                bitcoin: 'bitcoin', ethereum: 'ethereum', tether: 'tether',
-                binancecoin: 'bnb', solana: 'solana', ripple: 'xrp'
-            };
-            return classes[id] || '';
-        }
 
-        // ============================================
-        // RENDER FUNCTIONS
-        // ============================================
-        function renderTicker() {
-            const ticker = document.getElementById('ticker');
-            if (!cryptoData.length) return;
-            
-            const items = [...cryptoData, ...cryptoData];
-            ticker.innerHTML = items.map(c => `
-                <div class="ticker-item">
-                    <span class="symbol">${c.symbol}/USD</span>
-                    <span class="value">$${formatNumber(c.price_usd)}</span>
-                    <span class="${c.change_24h >= 0 ? 'change-up' : 'change-down'}">
-                        ${c.change_24h >= 0 ? '▲' : '▼'} ${Math.abs(c.change_24h).toFixed(2)}%
+    const topPicks =
+        analyzed.slice(0, 3);
+
+
+    container.innerHTML =
+        topPicks.map(
+            (c, i) => `
+
+            <div class="rec-card ${
+                i === 0
+                    ? 'recommended'
+                    : ''
+            }">
+
+                <div class="rec-header">
+
+                    <div class="rec-coin">
+
+                        <div
+                            class="rec-icon"
+                            style="
+                                background: ${c.color}20;
+                                color: ${c.color};
+                            "
+                        >
+                            ${c.icon}
+                        </div>
+
+                        <div>
+
+                            <div style="
+                                font-weight: 700;
+                            ">
+                                ${c.name}
+                            </div>
+
+                            <div style="
+                                font-size: 0.8rem;
+                                color: rgba(255,255,255,0.5);
+                            ">
+                                ${c.symbol}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="rec-score">
+
+                        ${c.score}/100
+
+                    </div>
+
+                </div>
+
+
+                <div class="rec-reason">
+
+                    ${c.reason}
+
+                </div>
+
+
+                <div class="rec-indicator">
+
+                    <span style="
+                        font-size: 0.8rem;
+                        min-width: 50px;
+                    ">
+
+                        ${
+                            c.action === 'buy'
+                                ? '🟢 خرید'
+                                : c.action === 'hold'
+                                    ? '🟡 نگهداری'
+                                    : '🔴 فروش'
+                        }
+
                     </span>
-                </div>
-            `).join('');
-        }
 
-        function renderCurrencyCards() {
-            const grid = document.getElementById('currencyGrid');
-            
-            const dollarPrice = tgjuData.dollar ? tgjuData.dollar.price : 0;
-            const dollarChange = tgjuData.dollar ? tgjuData.dollar.change : 0;
-            const tomanPrice = dollarPrice / 10;
 
-            // Dollar Card - از TGJU
-            const dollarCard = `
-                <div class="currency-card">
-                    <div class="card-header">
-                        <div class="coin-info">
-                            <div class="coin-icon dollar">💵</div>
-                            <div>
-                                <div class="coin-name">دلار آمریکا</div>
-                                <div class="coin-symbol">USD</div>
-                            </div>
-                        </div>
-                        <span class="change-badge ${dollarChange >= 0 ? 'positive' : 'negative'}">
-                            ${dollarChange >= 0 ? '▲' : '▼'} ${Math.abs(dollarChange).toFixed(2)}%
-                        </span>
+                    <div class="indicator-bar">
+
+                        <div
+                            class="indicator-fill ${c.action}"
+                            style="
+                                width: ${c.score}%;
+                            "
+                        ></div>
+
                     </div>
-                    <div class="price-main">${formatToman(tomanPrice)} تومان</div>
-                    <div class="price-toman">قیمت بازار آزاد (TGJU)</div>
-                    ${tgjuData.dollar ? `
-                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 8px;">
-                            کمترین: ${formatToman(tgjuData.dollar.low / 10)} | 
-                            بیشترین: ${formatToman(tgjuData.dollar.high / 10)}
-                        </div>
-                    ` : ''}
+
                 </div>
-            `;
 
-            // Tether Card
-            const tetherCard = `
-                <div class="currency-card">
-                    <div class="card-header">
-                        <div class="coin-info">
-                            <div class="coin-icon tether">₮</div>
-                            <div>
-                                <div class="coin-name">تتر (Tether)</div>
-                                <div class="coin-symbol">USDT</div>
-                            </div>
-                        </div>
-                        <span class="change-badge positive">
-                            ▲ 0.01%
-                        </span>
-                    </div>
-                    <div class="price-main">${formatToman(tomanPrice * 1.01)} تومان</div>
-                    <div class="price-toman">قیمت تتر در بازار ایران</div>
-                </div>
-            `;
+            </div>
 
-            // Toman Card
-            const tomanCard = `
-                <div class="currency-card">
-                    <div class="card-header">
-                        <div class="coin-info">
-                            <div class="coin-icon toman">💴</div>
-                            <div>
-                                <div class="coin-name">تومان ایران</div>
-                                <div class="coin-symbol">IRT</div>
-                            </div>
-                        </div>
-                        <span class="change-badge ${dollarChange >= 0 ? 'negative' : 'positive'}">
-                            ${dollarChange >= 0 ? '▼' : '▲'} ${Math.abs(dollarChange).toFixed(2)}%
-                        </span>
-                    </div>
-                    <div class="price-main">$${tomanPrice > 0 ? (1/tomanPrice).toFixed(6) : '---'}</div>
-                    <div class="price-toman">هر تومان به دلار</div>
-                </div>
-            `;
+        `).join('');
 
-            // Bitcoin Card
-            const btcData = cryptoData.find(c => c.id === 'bitcoin');
-            const btcCard = `
-                <div class="currency-card">
-                    <div class="card-header">
-                        <div class="coin-info">
-                            <div class="coin-icon bitcoin">₿</div>
-                            <div>
-                                <div class="coin-name">Bitcoin</div>
-                                <div class="coin-symbol">BTC</div>
-                            </div>
-                        </div>
-                        ${btcData ? `
-                        <span class="change-badge ${btcData.change_24h >= 0 ? 'positive' : 'negative'}">
-                            ${btcData.change_24h >= 0 ? '▲' : '▼'} ${Math.abs(btcData.change_24h).toFixed(2)}%
-                        </span>
-                        ` : ''}
-                    </div>
-                    <div class="price-main">$${btcData ? formatNumber(btcData.price_usd) : '---'}</div>
-                    <div class="price-toman">${btcData ? formatToman(tomanPrice(btcData.price_usd)) : '---'} تومان</div>
-                </div>
-            `;
 
-            grid.innerHTML = dollarCard + tetherCard + tomanCard + btcCard;
-        }
+    document.getElementById(
+        'aiUpdateTime'
+    ).textContent =
+        formatTime(
+            new Date()
+        );
+}
 
-        function renderAIRecommendations() {
-            const container = document.getElementById('aiRecommendations');
-            if (!cryptoData.length) return;
 
-            const analyzed = cryptoData.map(c => {
-                const sparkline = c.sparkline || [];
-                const trend = sparkline.length > 1 ? 
-                    sparkline[sparkline.length - 1] - sparkline[0] : 0;
-                const volatility = sparkline.length > 1 ? 
-                    Math.max(...sparkline) - Math.min(...sparkline) : 1;
-                
-                let score = 50;
-                if (volatility > 0) {
-                    score = Math.min(100, Math.max(0, 50 + (trend / volatility) * 100 + c.change_24h * 2));
-                } else {
-                    score = 50 + c.change_24h * 2;
-                }
-                
-                let action, reason;
-                if (score > 70) {
-                    action = 'buy';
-                    reason = `روند صعودی قوی با ${c.change_24h.toFixed(2)}% رشد در ۲۴ ساعت گذشته. حجم معاملات بالا و شکست مقاومت کلیدی.`;
-                } else if (score > 40) {
-                    action = 'hold';
-                    reason = `روند متعادل با نوسانات کنترل‌شده. پیشنهاد نگهداری تا تعیین جهت مشخص‌تر.`;
-                } else {
-                    action = 'sell';
-                    reason = `روند نزولی با فشار فروش بالا. احتمال اصلاح بیشتر قیمت در کوتاه‌مدت.`;
-                }
-                
-                return { ...c, score: Math.round(Math.min(100, Math.max(0, score))), action, reason };
-            }).sort((a, b) => b.score - a.score);
+/* =====================================================
+   TABLE
+===================================================== */
 
-            const topPicks = analyzed.slice(0, 3);
+function renderTable() {
 
-            container.innerHTML = topPicks.map((c, i) => `
-                <div class="rec-card ${i === 0 ? 'recommended' : ''}">
-                    <div class="rec-header">
-                        <div class="rec-coin">
-                            <div class="rec-icon" style="background: ${c.color}20; color: ${c.color}">
-                                ${c.icon}
-                            </div>
-                            <div>
-                                <div style="font-weight: 700;">${c.name}</div>
-                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">${c.symbol}</div>
-                            </div>
-                        </div>
-                        <div class="rec-score">${c.score}/100</div>
-                    </div>
-                    <div class="rec-reason">${c.reason}</div>
-                    <div class="rec-indicator">
-                        <span style="font-size: 0.8rem; min-width: 50px;">
-                            ${c.action === 'buy' ? '🟢 خرید' : c.action === 'hold' ? '🟡 نگهداری' : '🔴 فروش'}
-                        </span>
-                        <div class="indicator-bar">
-                            <div class="indicator-fill ${c.action}" style="width: ${c.score}%"></div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+    const tbody =
+        document.getElementById(
+            'cryptoTableBody'
+        );
 
-            document.getElementById('aiUpdateTime').textContent = formatTime(new Date());
-        }
 
-        function renderTable() {
-            const tbody = document.getElementById('cryptoTableBody');
-            if (!cryptoData.length) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: rgba(255,255,255,0.5);">در حال دریافت داده‌ها...</td></tr>';
-                return;
-            }
+    if (!cryptoData.length) {
 
-            tbody.innerHTML = cryptoData.map(c => {
-                const sparklineData = c.sparkline || [];
-                const sparklineColor = c.change_24h >= 0 ? '#00ffa3' : '#ff4d4d';
-                
-                return `
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    style="
+                        text-align:center;
+                        color:rgba(255,255,255,0.5);
+                    "
+                >
+
+                    در حال دریافت داده‌ها...
+
+                </td>
+
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tbody.innerHTML =
+        cryptoData.map(c => {
+
+            const sparklineData =
+                c.sparkline || [];
+
+
+            const sparklineColor =
+                c.change_24h >= 0
+                    ? '#00ffa3'
+                    : '#ff4d4d';
+
+
+            return `
+
                 <tr>
+
                     <td>
+
                         <div class="table-coin">
-                            <div class="table-icon" style="background: ${c.color}20; color: ${c.color}">
+
+                            <div
+                                class="table-icon"
+                                style="
+                                    background:
+                                        ${c.color}20;
+                                    color:
+                                        ${c.color};
+                                "
+                            >
+
                                 ${c.icon}
+
                             </div>
+
+
                             <div>
-                                <div style="font-weight: 700;">${c.name}</div>
-                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">${c.symbol}</div>
+
+                                <div style="
+                                    font-weight: 700;
+                                ">
+                                    ${c.name}
+                                </div>
+
+                                <div style="
+                                    font-size: 0.8rem;
+                                    color: rgba(255,255,255,0.5);
+                                ">
+                                    ${c.symbol}
+                                </div>
+
                             </div>
+
                         </div>
+
                     </td>
-                    <td style="font-weight: 700;">$${formatNumber(c.price_usd)}</td>
-                    <td style="color: rgba(255,255,255,0.7);">${formatToman(tomanPrice(c.price_usd))} تومان</td>
+
+
+                    <td style="
+                        font-weight: 700;
+                    ">
+
+                        $${formatNumber(
+                            c.price_usd
+                        )}
+
+                    </td>
+
+
+                    <td style="
+                        color:
+                            rgba(255,255,255,0.7);
+                    ">
+
+                        ${formatToman(
+                            tomanPrice(
+                                c.price_usd
+                            )
+                        )}
+
+                        تومان
+
+                    </td>
+
+
                     <td>
-                        <span class="change-badge ${c.change_24h >= 0 ? 'positive' : 'negative'}">
-                            ${c.change_24h >= 0 ? '▲' : '▼'} ${Math.abs(c.change_24h).toFixed(2)}%
+
+                        <span class="change-badge ${
+                            c.change_24h >= 0
+                                ? 'positive'
+                                : 'negative'
+                        }">
+
+                            ${
+                                c.change_24h >= 0
+                                    ? '▲'
+                                    : '▼'
+                            }
+
+                            ${Math.abs(
+                                c.change_24h
+                            ).toFixed(2)}%
+
                         </span>
+
                     </td>
-                    <td>${createSparkline(sparklineData, sparklineColor)}</td>
-                    <td style="color: rgba(255,255,255,0.7);">${c.volume}</td>
+
+
+                    <td>
+
+                        ${createSparkline(
+                            sparklineData,
+                            sparklineColor
+                        )}
+
+                    </td>
+
+
+                    <td style="
+                        color:
+                            rgba(255,255,255,0.7);
+                    ">
+
+                        ${c.volume}
+
+                    </td>
+
                 </tr>
-            `}).join('');
+
+            `;
+
+        }).join('');
+}
+
+
+/* =====================================================
+   RENDER ALL
+===================================================== */
+
+function renderAll() {
+
+    renderTicker();
+
+    renderCurrencyCards();
+
+    renderAIRecommendations();
+
+    renderTable();
+}
+
+
+/* =====================================================
+   MAIN UPDATE
+===================================================== */
+
+async function performUpdate() {
+
+    // جلوگیری از اجرای همزمان دو آپدیت
+    if (updateRunning) {
+        return;
+    }
+
+
+    updateRunning = true;
+
+
+    const dot =
+        document.getElementById(
+            'updateDot'
+        );
+
+
+    const status =
+        document.getElementById(
+            'lastUpdate'
+        );
+
+
+    const notif =
+        document.getElementById(
+            'notification'
+        );
+
+
+    dot.className =
+        'update-dot loading';
+
+
+    status.textContent =
+        'در حال دریافت قیمت‌ها...';
+
+
+    try {
+
+        /*
+         * مهم:
+         * دلار و رمزارزها مستقل از هم دریافت می‌شوند.
+         * اگر TGJU خراب باشد CoinGecko همچنان کار می‌کند.
+         */
+
+        const results =
+            await Promise.allSettled([
+
+                fetchTgjuDollar(),
+
+                fetchCryptoPrices()
+
+            ]);
+
+
+        /* =========================
+           DOLLAR RESULT
+        ========================= */
+
+        if (
+            results[0].status ===
+            'fulfilled' &&
+            results[0].value
+        ) {
+
+            tgjuData.dollar =
+                results[0].value;
+
         }
 
-        // ============================================
-        // UPDATE LOGIC
-        // ============================================
-        async function performUpdate() {
-            const dot = document.getElementById('updateDot');
-            const status = document.getElementById('lastUpdate');
-            const notif = document.getElementById('notification');
-            
-            dot.className = 'update-dot loading';
-            status.textContent = 'در حال تست CORS Proxy...';
 
-            // ابتدا پروکسی کارا رو پیدا کن
-            const proxyWorking = await findWorkingProxy();
-            if (!proxyWorking) {
-                dot.className = 'update-dot error';
-                status.textContent = 'هیچ CORS Proxy کار نمی‌کند';
-                useFallbackData();
-                return;
-            }
+        /* =========================
+           CRYPTO RESULT
+        ========================= */
 
-            status.textContent = 'در حال دریافت از TGJU...';
+        if (
+            results[1].status ===
+            'fulfilled' &&
+            Array.isArray(
+                results[1].value
+            ) &&
+            results[1].value.length
+        ) {
 
-            try {
-                // Fetch from TGJU
-                const tgjuDollar = await fetchTgjuDollar();
-                if (tgjuDollar) {
-                    tgjuData.dollar = tgjuDollar;
-                    console.log('✅ TGJU Dollar fetched:', tgjuDollar);
-                } else {
-                    console.log('⚠️ Could not fetch TGJU dollar');
-                }
+            cryptoData =
+                results[1].value;
 
-                // Fetch crypto from CoinGecko
-                cryptoData = await fetchCryptoPrices();
-                
-                // Render everything
-                renderTicker();
-                renderCurrencyCards();
-                renderAIRecommendations();
-                renderTable();
+        } else {
 
-                // Update status
-                dot.className = 'update-dot';
-                status.textContent = formatTime(new Date()) + ' (TGJU via Proxy)';
-                
-                // Show notification
-                notif.className = 'notification show';
-                setTimeout(() => notif.className = 'notification', 3000);
-
-                // Reset countdown
-                nextUpdateTime = Date.now() + CONFIG.UPDATE_INTERVAL;
-
-            } catch (error) {
-                console.error('Update failed:', error);
-                dot.className = 'update-dot error';
-                status.textContent = 'خطا در دریافت - استفاده از داده‌های آفلاین';
-                
-                notif.textContent = '❌ خطا در دریافت داده‌ها';
-                notif.className = 'notification error show';
-                setTimeout(() => {
-                    notif.className = 'notification';
-                    notif.textContent = '✅ داده‌ها با موفقیت به‌روزرسانی شدند!';
-                }, 3000);
-
-                useFallbackData();
-            }
+            throw new Error(
+                'دریافت قیمت رمزارزها ناموفق بود'
+            );
         }
 
-        function updateCountdown() {
-            const now = Date.now();
-            const remaining = Math.max(0, nextUpdateTime - now);
-            const minutes = Math.floor(remaining / 60000);
-            const seconds = Math.floor((remaining % 60000) / 1000);
-            
-            document.getElementById('countdown').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (remaining <= 0) {
-                performUpdate();
-            }
+
+        /* =========================
+           RENDER
+        ========================= */
+
+        renderAll();
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        dot.className =
+            'update-dot';
+
+
+        if (tgjuData.dollar) {
+
+            status.textContent =
+                formatTime(
+                    new Date()
+                ) +
+                ' | اطلاعات زنده';
+
+        } else {
+
+            status.textContent =
+                formatTime(
+                    new Date()
+                ) +
+                ' | رمزارز زنده / دلار پیش‌فرض';
         }
 
-        // ============================================
-        // FALLBACK DATA
-        // ============================================
-        function useFallbackData() {
-            tgjuData.dollar = {
-                price: 18540000,
-                change: 0,
-                low: 18468000,
-                high: 18672000,
-                time: '18 مرداد'
-            };
 
-            cryptoData = [
-                { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', price_usd: 64112.27, change_24h: 0.02, volume: '$28.5B', icon: '₿', color: '#f7931a', sparkline: [63000, 63500, 63800, 64000, 63900, 64200, 64112] },
-                { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', price_usd: 3521.78, change_24h: -1.12, volume: '$15.2B', icon: 'Ξ', color: '#627eea', sparkline: [3600, 3580, 3550, 3490, 3450, 3480, 3521] },
-                { id: 'tether', name: 'Tether', symbol: 'USDT', price_usd: 1.00, change_24h: 0.03, volume: '$52.1B', icon: '₮', color: '#26a17b', sparkline: [1, 1, 1, 1, 1, 1, 1] },
-                { id: 'binancecoin', name: 'BNB', symbol: 'BNB', price_usd: 612.45, change_24h: 5.67, volume: '$2.1B', icon: 'B', color: '#f3ba2f', sparkline: [580, 585, 590, 600, 595, 608, 612] },
-                { id: 'solana', name: 'Solana', symbol: 'SOL', price_usd: 148.92, change_24h: 8.23, volume: '$4.8B', icon: '◎', color: '#00ffa3', sparkline: [135, 138, 142, 140, 145, 146, 148] },
-                { id: 'ripple', name: 'XRP', symbol: 'XRP', price_usd: 0.6234, change_24h: -3.45, volume: '$1.9B', icon: '✕', color: '#23292f', sparkline: [0.65, 0.64, 0.63, 0.62, 0.61, 0.615, 0.623] },
-                { id: 'cardano', name: 'Cardano', symbol: 'ADA', price_usd: 0.4567, change_24h: 1.89, volume: '$890M', icon: '₳', color: '#0033ad', sparkline: [0.44, 0.445, 0.45, 0.448, 0.452, 0.455, 0.456] },
-                { id: 'dogecoin', name: 'Dogecoin', symbol: 'DOGE', price_usd: 0.1234, change_24h: 12.45, volume: '$2.5B', icon: 'Ð', color: '#c2a633', sparkline: [0.11, 0.112, 0.115, 0.118, 0.12, 0.122, 0.123] }
-            ];
-            
+        /* =========================
+           NOTIFICATION
+        ========================= */
+
+        notif.textContent =
+            '✅ داده‌ها با موفقیت به‌روزرسانی شدند!';
+
+
+        notif.className =
+            'notification show';
+
+
+        setTimeout(() => {
+
+            notif.className =
+                'notification';
+
+        }, 3000);
+
+
+        /* =========================
+           RESET TIMER
+        ========================= */
+
+        nextUpdateTime =
+            Date.now() +
+            CONFIG.UPDATE_INTERVAL;
+
+
+        console.log(
+            '✅ Prices updated:',
+            new Date().toLocaleTimeString()
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Update failed:',
+            error
+        );
+
+
+        dot.className =
+            'update-dot error';
+
+
+        status.textContent =
+            'خطا در دریافت قیمت رمزارزها';
+
+
+        notif.textContent =
+            '❌ دریافت قیمت‌ها ناموفق بود';
+
+
+        notif.className =
+            'notification error show';
+
+
+        setTimeout(() => {
+
+            notif.className =
+                'notification';
+
+            notif.textContent =
+                '✅ داده‌ها با موفقیت به‌روزرسانی شدند!';
+
+        }, 3000);
+
+
+        /*
+         * اگر قبلاً داده داشتیم،
+         * همان داده قبلی را نگه می‌داریم.
+         */
+
+        if (cryptoData.length) {
+
             renderAll();
-            
-            const dot = document.getElementById('updateDot');
-            const status = document.getElementById('lastUpdate');
-            dot.className = 'update-dot error';
-            status.textContent = 'داده‌های آفلاین - CORS Proxy کار نمی‌کند';
-        }
 
-        function renderAll() {
-            renderTicker();
-            renderCurrencyCards();
-            renderAIRecommendations();
-            renderTable();
         }
+    }
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        async function init() {
-            try {
-                await performUpdate();
-            } catch (error) {
-                console.log('Using fallback data');
-                useFallbackData();
-            }
-            
-            // Start countdown
-            countdownInterval = setInterval(updateCountdown, 1000);
-            
-            // Auto-update every hour
-            setInterval(performUpdate, CONFIG.UPDATE_INTERVAL);
-        }
 
-        // Start
-        init();
-    </script>
+    updateRunning = false;
+}
+
+
+/* =====================================================
+   COUNTDOWN
+===================================================== */
+
+function updateCountdown() {
+
+    const remaining =
+        Math.max(
+            0,
+            nextUpdateTime -
+            Date.now()
+        );
+
+
+    const minutes =
+        Math.floor(
+            remaining / 60000
+        );
+
+
+    const seconds =
+        Math.floor(
+            (remaining % 60000) / 1000
+        );
+
+
+    const countdown =
+        document.getElementById(
+            'countdown'
+        );
+
+
+    countdown.textContent =
+        `${minutes
+            .toString()
+            .padStart(2, '0')
+        }:${
+            seconds
+                .toString()
+                .padStart(2, '0')
+        }`;
+
+
+    if (
+        remaining <= 0 &&
+        !updateRunning
+    ) {
+
+        nextUpdateTime =
+            Date.now() +
+            CONFIG.UPDATE_INTERVAL;
+
+        performUpdate();
+    }
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+async function init() {
+
+    console.log(
+        '🚀 Mr. Bitcoin starting...'
+    );
+
+
+    await performUpdate();
+
+
+    /*
+     * فقط یک تایمر داریم.
+     * هر 1 ثانیه شمارنده را چک می‌کند
+     * و بعد از 60 ثانیه قیمت‌ها را آپدیت می‌کند.
+     */
+
+    setInterval(
+        updateCountdown,
+        1000
+    );
+
+
+    console.log(
+        '⏱ Auto update: every 60 seconds'
+    );
+}
+
+
+/* =====================================================
+   RUN
+===================================================== */
+
+init();
+
+</script>
+
 </body>
 </html>
