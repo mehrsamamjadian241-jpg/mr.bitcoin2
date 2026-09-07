@@ -634,187 +634,295 @@ footer{
 
 <script>
 
-/* =========================
-   تنظیمات API
-========================= */
-
 const API = {
-    TGJU: "https://tgju-api-go.vercel.app/api/price",
-    COINGECKO: "https://api.coingecko.com/api/v3",
-    BINANCE: "https://api.binance.com"
+    BINANCE: "https://api.binance.com",
+    TGJU: "https://tgju-api-go.vercel.app/api/price"
 };
 
 const CONFIG = {
     UPDATE_INTERVAL: 60000,
-    REQUEST_TIMEOUT: 12000,
-    DEFAULT_DOLLAR_TOMAN: 223000,
-    MIN_DOLLAR_TOMAN: 150000
+    REQUEST_TIMEOUT: 10000,
+    DEFAULT_DOLLAR_TOMAN: 223000
 };
 
-
-/* =========================
-   اطلاعات ارزها
-========================= */
-
-const coins = [
-
-    {
-        id:"bitcoin",
-        name:"بیت‌کوین",
-        symbol:"BTC",
-        binance:"BTCUSDT",
-        icon:"₿"
-    },
-
-    {
-        id:"ethereum",
-        name:"اتریوم",
-        symbol:"ETH",
-        binance:"ETHUSDT",
-        icon:"Ξ"
-    },
-
-    {
-        id:"tether",
-        name:"تتر",
-        symbol:"USDT",
-        binance:null,
-        icon:"₮"
-    },
-
-    {
-        id:"binancecoin",
-        name:"بایننس کوین",
-        symbol:"BNB",
-        binance:"BNBUSDT",
-        icon:"BNB"
-    },
-
-    {
-        id:"solana",
-        name:"سولانا",
-        symbol:"SOL",
-        binance:"SOLUSDT",
-        icon:"SOL"
-    },
-
-    {
-        id:"ripple",
-        name:"ریپل",
-        symbol:"XRP",
-        binance:"XRPUSDT",
-        icon:"XRP"
-    },
-
-    {
-        id:"cardano",
-        name:"کاردانو",
-        symbol:"ADA",
-        binance:"ADAUSDT",
-        icon:"ADA"
-    },
-
-    {
-        id:"dogecoin",
-        name:"دوج‌کوین",
-        symbol:"DOGE",
-        binance:"DOGEUSDT",
-        icon:"Ð"
-    }
-
-];
-
-
-/* =========================
-   متغیرهای اصلی
-========================= */
-
 let dollarToman = CONFIG.DEFAULT_DOLLAR_TOMAN;
-
-let dollarSource = "پیش‌فرض";
-
 let marketData = [];
-
-let lastSuccessfulData = [];
-
 let updateRunning = false;
-
 let countdownValue = 60;
-
 let countdownTimer = null;
 
 
 /* =========================
-   درخواست امن
+   ارزها
 ========================= */
 
-async function safeFetch(url, timeout = CONFIG.REQUEST_TIMEOUT){
+const coins = [
+    {
+        id: "bitcoin",
+        name: "بیت‌کوین",
+        symbol: "BTC",
+        binance: "BTCUSDT",
+        icon: "₿"
+    },
+    {
+        id: "ethereum",
+        name: "اتریوم",
+        symbol: "ETH",
+        binance: "ETHUSDT",
+        icon: "Ξ"
+    },
+    {
+        id: "tether",
+        name: "تتر",
+        symbol: "USDT",
+        binance: "USDTUSDT",
+        icon: "₮"
+    },
+    {
+        id: "binancecoin",
+        name: "بایننس کوین",
+        symbol: "BNB",
+        binance: "BNBUSDT",
+        icon: "BNB"
+    },
+    {
+        id: "solana",
+        name: "سولانا",
+        symbol: "SOL",
+        binance: "SOLUSDT",
+        icon: "SOL"
+    },
+    {
+        id: "ripple",
+        name: "ریپل",
+        symbol: "XRP",
+        binance: "XRPUSDT",
+        icon: "XRP"
+    },
+    {
+        id: "cardano",
+        name: "کاردانو",
+        symbol: "ADA",
+        binance: "ADAUSDT",
+        icon: "ADA"
+    },
+    {
+        id: "dogecoin",
+        name: "دوج‌کوین",
+        symbol: "DOGE",
+        binance: "DOGEUSDT",
+        icon: "Ð"
+    }
+];
+
+
+/* =========================
+   درخواست با timeout
+========================= */
+
+async function safeFetch(url) {
 
     const controller = new AbortController();
 
-    const timer = setTimeout(
-        () => controller.abort(),
-        timeout
-    );
+    const timeout = setTimeout(() => {
+        controller.abort();
+    }, CONFIG.REQUEST_TIMEOUT);
 
-    try{
+    try {
 
         const response = await fetch(
             url,
             {
-                cache:"no-store",
-                signal:controller.signal,
-                headers:{
-                    "Accept":"application/json"
+                method: "GET",
+                cache: "no-store",
+                signal: controller.signal,
+                headers: {
+                    "Accept": "application/json"
                 }
             }
         );
 
-        if(!response.ok){
-
+        if (!response.ok) {
             throw new Error(
                 "HTTP " + response.status
             );
-
         }
 
         return response;
 
-    }finally{
+    } finally {
 
-        clearTimeout(timer);
+        clearTimeout(timeout);
 
     }
-
 }
 
 
 /* =========================
-   تبدیل اعداد فارسی
+   دریافت دلار
 ========================= */
 
-function normalizeDigits(value){
+async function fetchDollar() {
 
-    return String(value ?? "")
-        .replace(/[۰-۹]/g, d =>
-            "۰۱۲۳۴۵۶۷۸۹".indexOf(d)
-        )
-        .replace(/[٠-٩]/g, d =>
-            "٠١٢٣٤٥٦٧٨٩".indexOf(d)
+    try {
+
+        const response = await safeFetch(
+            API.TGJU +
+            "/currency?t=" +
+            Date.now()
         );
 
+        const data = await response.json();
+
+        const item =
+            Array.isArray(data?.items)
+                ? data.items.find(
+                    x => x?.key === "price_dollar_rl"
+                )
+                : null;
+
+        const raw =
+            item?.price?.value ??
+            item?.price?.text ??
+            item?.value;
+
+        if (!raw) return false;
+
+        const rial =
+            Number(
+                String(raw)
+                    .replace(/,/g, "")
+                    .replace(/٬/g, "")
+                    .replace(/[^\d.]/g, "")
+            );
+
+        if (
+            Number.isFinite(rial) &&
+            rial > 1000000 &&
+            rial < 10000000
+        ) {
+
+            dollarToman =
+                Math.round(rial / 10);
+
+            return true;
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Dollar API error:",
+            error
+        );
+
+    }
+
+    return false;
 }
 
 
-function numberValue(value){
+/* =========================
+   Binance - دریافت همه قیمت‌ها
+   فقط یک درخواست برای تمام ارزها
+========================= */
 
-    const n = Number(
-        normalizeDigits(value)
-            .replace(/[٬,\s]/g,"")
-    );
+async function fetchBinancePrices() {
 
-    return Number.isFinite(n) ? n : null;
+    const url =
+        API.BINANCE +
+        "/api/v3/ticker/24hr?t=" +
+        Date.now();
 
+    const response =
+        await safeFetch(url);
+
+    const all =
+        await response.json();
+
+    if (!Array.isArray(all)) {
+        throw new Error(
+            "Invalid Binance response"
+        );
+    }
+
+    const result = [];
+
+    for (const coin of coins) {
+
+        /*
+          تتر همیشه تقریباً 1 دلار است.
+          قیمت تومان آن از نرخ دلار محاسبه می‌شود.
+        */
+
+        if (coin.symbol === "USDT") {
+
+            result.push({
+                id: coin.id,
+                name: coin.name,
+                symbol: coin.symbol,
+                current_price: 1,
+                price_change_percentage_24h: 0,
+                total_volume: 0,
+                icon: coin.icon
+            });
+
+            continue;
+        }
+
+        const item =
+            all.find(
+                x => x.symbol === coin.binance
+            );
+
+        if (!item) continue;
+
+        const price =
+            Number(item.lastPrice);
+
+        const change =
+            Number(item.priceChangePercent);
+
+        const volume =
+            Number(item.quoteVolume);
+
+        if (!Number.isFinite(price)) {
+            continue;
+        }
+
+        result.push({
+
+            id: coin.id,
+
+            name: coin.name,
+
+            symbol: coin.symbol,
+
+            current_price: price,
+
+            price_change_percentage_24h:
+                Number.isFinite(change)
+                    ? change
+                    : 0,
+
+            total_volume:
+                Number.isFinite(volume)
+                    ? volume
+                    : 0,
+
+            icon: coin.icon
+
+        });
+    }
+
+    if (result.length < 6) {
+
+        throw new Error(
+            "Not enough live prices"
+        );
+
+    }
+
+    return result;
 }
 
 
@@ -822,430 +930,812 @@ function numberValue(value){
    فرمت قیمت
 ========================= */
 
-function formatUSD(value){
+function formatUSD(value) {
 
-    if(
+    if (
         value === null ||
         value === undefined ||
         !Number.isFinite(Number(value))
-    ){
-
+    ) {
         return "—";
-
     }
 
     const n = Number(value);
 
-    return "$" + n.toLocaleString(
-        "en-US",
-        {
-            maximumFractionDigits:
-                n < 1 ? 8 : 2
-        }
-    );
-
+    return "$" +
+        n.toLocaleString(
+            "en-US",
+            {
+                maximumFractionDigits:
+                    n < 1 ? 8 : 2
+            }
+        );
 }
 
 
-function formatToman(value){
+function formatToman(value) {
 
-    if(
+    if (
         value === null ||
         value === undefined ||
         !Number.isFinite(Number(value))
-    ){
-
+    ) {
         return "—";
-
     }
 
     return Math.round(Number(value))
-        .toLocaleString("fa-IR") + " تومان";
-
+        .toLocaleString("fa-IR") +
+        " تومان";
 }
 
 
-function formatVolume(value){
+function formatVolume(value) {
 
-    if(
-        value === null ||
-        value === undefined ||
-        !Number.isFinite(Number(value))
-    ){
-
+    if (!Number.isFinite(Number(value))) {
         return "—";
-
     }
 
     const n = Number(value);
 
-    if(n >= 1e12)
-        return "$" + (n / 1e12).toFixed(2) + "T";
+    if (n >= 1e12)
+        return "$" +
+            (n / 1e12).toFixed(2) +
+            "T";
 
-    if(n >= 1e9)
-        return "$" + (n / 1e9).toFixed(2) + "B";
+    if (n >= 1e9)
+        return "$" +
+            (n / 1e9).toFixed(2) +
+            "B";
 
-    if(n >= 1e6)
-        return "$" + (n / 1e6).toFixed(2) + "M";
+    if (n >= 1e6)
+        return "$" +
+            (n / 1e6).toFixed(2) +
+            "M";
 
-    if(n >= 1e3)
-        return "$" + (n / 1e3).toFixed(2) + "K";
+    if (n >= 1e3)
+        return "$" +
+            (n / 1e3).toFixed(2) +
+            "K";
 
     return "$" + n.toFixed(2);
-
 }
 
 
 /* =========================
-   دریافت دلار از TGJU
+   کارت‌های بالای سایت
 ========================= */
 
-async function fetchDollar(){
-
-    try{
-
-        const url =
-            API.TGJU +
-            "/currency?t=" +
-            Date.now();
-
-        const response =
-            await safeFetch(url);
-
-        const data =
-            await response.json();
-
-        const item =
-            Array.isArray(data?.items)
-                ? data.items.find(
-                    x => x?.key === "price_dollar_rl"
-                  )
-                : null;
-
-        const rial =
-            numberValue(
-                item?.price?.value ??
-                item?.price?.text ??
-                item?.value
-            );
-
-        if(
-            rial &&
-            rial >= 1500000 &&
-            rial <= 5000000
-        ){
-
-            dollarToman =
-                Math.round(rial / 10);
-
-            dollarSource =
-                "زنده (TGJU)";
-
-            return true;
-
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Dollar API failed:",
-            error
-        );
-
-    }
-
-    dollarSource = "آخرین قیمت موفق";
-
-    return false;
-
-}
-
-
-/* =========================
-   CoinGecko
-========================= */
-
-async function fetchCoinGecko(){
-
-    const ids =
-        coins
-            .map(c => c.id)
-            .join(",");
-
-    const url =
-        API.COINGECKO +
-        "/coins/markets" +
-        "?vs_currency=usd" +
-        "&ids=" +
-        encodeURIComponent(ids) +
-        "&order=market_cap_desc" +
-        "&per_page=20" +
-        "&page=1" +
-        "&sparkline=false" +
-        "&price_change_percentage=24h" +
-        "&include_24hr_vol=true" +
-        "&t=" +
-        Date.now();
-
-    const response =
-        await safeFetch(url);
-
-    const data =
-        await response.json();
-
-    if(
-        !Array.isArray(data) ||
-        data.length === 0
-    ){
-
-        throw new Error(
-            "CoinGecko returned empty data"
-        );
-
-    }
-
-    return data.map(item => {
-
-        const config =
-            coins.find(
-                c => c.id === item.id
-            );
-
-        return {
-            ...item,
-            symbol:
-                config?.symbol ||
-                item.symbol,
-            name:
-                config?.name ||
-                item.name,
-            icon:
-                config?.icon || "●"
-        };
-
-    });
-
-}
-
-
-/* =========================
-   Binance
-========================= */
-
-async function fetchBinanceCoin(config){
-
-    if(config.symbol === "USDT"){
-
-        return {
-            id:"tether",
-            name:"تتر",
-            symbol:"USDT",
-            current_price:1,
-            price_change_percentage_24h:0,
-            total_volume:0,
-            icon:"₮"
-        };
-
-    }
-
-    const url =
-        API.BINANCE +
-        "/api/v3/ticker/24hr" +
-        "?symbol=" +
-        config.binance +
-        "&t=" +
-        Date.now();
-
-    const response =
-        await safeFetch(url);
-
-    const data =
-        await response.json();
-
-    if(!data?.lastPrice){
-
-        throw new Error(
-            "Invalid Binance data"
-        );
-
-    }
-
-    return {
-
-        id:config.id,
-
-        name:config.name,
-
-        symbol:config.symbol,
-
-        current_price:
-            Number(data.lastPrice),
-
-        price_change_percentage_24h:
-            Number(data.priceChangePercent || 0),
-
-        total_volume:
-            Number(data.quoteVolume || 0),
-
-        icon:config.icon
-
-    };
-
-}
-
-
-async function fetchBinance(){
-
-    const results =
-        await Promise.allSettled(
-            coins.map(
-                c => fetchBinanceCoin(c)
-            )
-        );
-
-    const successful =
-        results
-            .filter(
-                r => r.status === "fulfilled"
-            )
-            .map(
-                r => r.value
-            );
-
-    if(successful.length < 4){
-
-        throw new Error(
-            "Binance returned insufficient data"
-        );
-
-    }
-
-    return successful;
-
-}
-
-
-/* =========================
-   دریافت بازار با پشتیبان
-========================= */
-
-async function fetchCryptoPrices(){
-
-    try{
-
-        const data =
-            await fetchCoinGecko();
-
-        return {
-            data,
-            source:"CoinGecko"
-        };
-
-    }catch(error){
-
-        console.warn(
-            "CoinGecko failed. Using Binance.",
-            error
-        );
-
-    }
-
-    try{
-
-        const data =
-            await fetchBinance();
-
-        return {
-            data,
-            source:"Binance"
-        };
-
-    }catch(error){
-
-        console.warn(
-            "Binance failed.",
-            error
-        );
-
-    }
-
-    if(
-        lastSuccessfulData.length
-    ){
-
-        return {
-            data:lastSuccessfulData,
-            source:"آخرین داده موفق"
-        };
-
-    }
-
-    throw new Error(
-        "All crypto APIs failed"
-    );
-
-}
-
-
-/* =========================
-   نمایش پیام
-========================= */
-
-function showNotification(message){
-
-    const el =
-        document.getElementById(
-            "notification"
-        );
-
-    el.textContent = message;
-
-    el.classList.add("show");
-
-    setTimeout(
-        () => el.classList.remove("show"),
-        3000
-    );
-
-}
-
-
-/* =========================
-   کارت‌های ارز
-========================= */
-
-function renderCurrencyCards(){
-
-    const btc =
-        marketData.find(
-            c => c.symbol === "BTC"
-        );
-
-    const tether =
-        marketData.find(
-            c => c.symbol === "USDT"
-        );
-
-    const btcPrice =
-        btc?.current_price ?? null;
-
-    const usdtPrice =
-        dollarToman;
-
-    const btcToman =
-        btcPrice !== null
-            ? btcPrice * dollarToman
-            : null;
+function renderCurrencyCards() {
 
     const grid =
         document.getElementById(
             "currencyGrid"
         );
 
+    const btc =
+        marketData.find(
+            x => x.symbol === "BTC"
+        );
+
+    const btcPrice =
+        btc?.current_price ?? null;
+
+    const btcToman =
+        btcPrice !== null
+            ? btcPrice * dollarToman
+            : null;
+
     const btcChange =
-        btc?.price_change_percentage_24h;
+        Number(
+            btc?.price_change_percentage_24h ?? 0
+        );
 
     grid.innerHTML = `
+
+        <div class="currency-card">
+
+            <div class="currency-icon">$</div>
+
+            <div class="currency-name">
+                دلار آمریکا
+            </div>
+
+            <div class="currency-price">
+                ${formatToman(dollarToman)}
+            </div>
+
+            <div class="currency-change">
+                قیمت لحظه‌ای
+            </div>
+
+            <div class="currency-meta">
+                <span>منبع</span>
+                <span>TGJU</span>
+            </div>
+
+        </div>
+
+
+        <div class="currency-card">
+
+            <div class="currency-icon">₮</div>
+
+            <div class="currency-name">
+                تتر
+            </div>
+
+            <div class="currency-price">
+                ${formatToman(dollarToman)}
+            </div>
+
+            <div class="currency-change">
+                USDT / USD
+            </div>
+
+            <div class="currency-meta">
+                <span>قیمت</span>
+                <span>$1</span>
+            </div>
+
+        </div>
+
+
+        <div class="currency-card">
+
+            <div class="currency-icon">﷼</div>
+
+            <div class="currency-name">
+                تومان
+            </div>
+
+            <div class="currency-price">
+                ${dollarToman.toLocaleString("fa-IR")}
+            </div>
+
+            <div class="currency-change">
+                نرخ تبدیل دلار
+            </div>
+
+            <div class="currency-meta">
+                <span>۱ دلار</span>
+                <span>تومان</span>
+            </div>
+
+        </div>
+
+
+        <div class="currency-card">
+
+            <div class="currency-icon">₿</div>
+
+            <div class="currency-name">
+                بیت‌کوین
+            </div>
+
+            <div class="currency-price">
+                ${formatUSD(btcPrice)}
+            </div>
+
+            <div class="currency-change ${
+                btcChange >= 0
+                    ? "green"
+                    : "red"
+            }">
+
+                ${
+                    btcChange >= 0
+                        ? "+"
+                        : ""
+                }${btcChange.toFixed(2)}%
+
+            </div>
+
+            <div class="currency-meta">
+                <span>تومان</span>
+                <span>
+                    ${formatToman(btcToman)}
+                </span>
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+/* =========================
+   تیکر
+========================= */
+
+function renderTicker() {
+
+    const ticker =
+        document.getElementById(
+            "ticker"
+        );
+
+    ticker.innerHTML =
+        marketData.map(c => {
+
+            const change =
+                Number(
+                    c.price_change_percentage_24h || 0
+                );
+
+            return `
+
+                <span class="ticker-item">
+
+                    ${c.symbol}
+
+                    <span class="ticker-price">
+                        ${formatUSD(c.current_price)}
+                    </span>
+
+                    <span class="${
+                        change >= 0
+                            ? "green"
+                            : "red"
+                    }">
+
+                        ${
+                            change >= 0
+                                ? "+"
+                                : ""
+                        }${change.toFixed(2)}%
+
+                    </span>
+
+                </span>
+
+            `;
+
+        }).join("");
+}
+
+
+/* =========================
+   جدول
+========================= */
+
+function renderTable(list = marketData) {
+
+    const body =
+        document.getElementById(
+            "cryptoTableBody"
+        );
+
+    if (!list.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="6" class="loading">
+                    داده‌ای دریافت نشد.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    body.innerHTML =
+        list.map(c => {
+
+            const price =
+                Number(c.current_price);
+
+            const toman =
+                price * dollarToman;
+
+            const change =
+                Number(
+                    c.price_change_percentage_24h || 0
+                );
+
+            return `
+
+                <tr>
+
+                    <td>
+
+                        <div class="coin">
+
+                            <div
+                                class="currency-icon"
+                                style="
+                                    width:38px;
+                                    height:38px;
+                                    min-width:38px;
+                                    margin:0;
+                                    font-size:14px;
+                                "
+                            >
+                                ${c.icon}
+                            </div>
+
+                            <div>
+
+                                <div class="coin-name">
+                                    ${c.name}
+                                </div>
+
+                                <div class="coin-symbol">
+                                    ${c.symbol}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+                        ${formatUSD(price)}
+                    </td>
+
+
+                    <td>
+                        ${formatToman(toman)}
+                    </td>
+
+
+                    <td class="${
+                        change >= 0
+                            ? "green"
+                            : "red"
+                    }">
+
+                        ${
+                            change >= 0
+                                ? "+"
+                                : ""
+                        }${change.toFixed(2)}%
+
+                    </td>
+
+
+                    <td>
+                        ${formatVolume(c.total_volume)}
+                    </td>
+
+
+                    <td>
+
+                        <span class="${
+                            change >= 0
+                                ? "green"
+                                : "red"
+                        }">
+
+                            ${
+                                change >= 0
+                                    ? "▲ مثبت"
+                                    : "▼ منفی"
+                            }
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+}
+
+
+/* =========================
+   تحلیل
+========================= */
+
+function renderAI() {
+
+    const box =
+        document.getElementById(
+            "aiRecommendations"
+        );
+
+    if (!marketData.length) return;
+
+    const sorted =
+        [...marketData].sort(
+            (a,b) =>
+                Number(
+                    b.price_change_percentage_24h
+                ) -
+                Number(
+                    a.price_change_percentage_24h
+                )
+        );
+
+    const best = sorted[0];
+    const worst =
+        sorted[sorted.length - 1];
+
+    const btc =
+        marketData.find(
+            x => x.symbol === "BTC"
+        );
+
+    const btcChange =
+        Number(
+            btc?.price_change_percentage_24h || 0
+        );
+
+    let status =
+        "بازار در حال نوسان است.";
+
+    if (btcChange > 2) {
+
+        status =
+            "بیت‌کوین امروز رشد مثبت داشته است.";
+
+    } else if (btcChange < -2) {
+
+        status =
+            "بیت‌کوین امروز کاهش داشته است.";
+
+    }
+
+    box.innerHTML = `
+
+        <div class="ai-item">
+
+            <strong>
+                📈 بیشترین رشد
+            </strong>
+
+            <span>
+                ${best.name}
+                با
+                ${
+                    best.price_change_percentage_24h >= 0
+                        ? "+"
+                        : ""
+                }${Number(
+                    best.price_change_percentage_24h
+                ).toFixed(2)}٪
+            </span>
+
+        </div>
+
+
+        <div class="ai-item">
+
+            <strong>
+                📉 بیشترین کاهش
+            </strong>
+
+            <span>
+                ${worst.name}
+                با
+                ${Number(
+                    worst.price_change_percentage_24h
+                ).toFixed(2)}٪
+            </span>
+
+        </div>
+
+
+        <div class="ai-item">
+
+            <strong>
+                🤖 وضعیت بازار
+            </strong>
+
+            <span>
+                ${status}
+            </span>
+
+        </div>
+
+    `;
+
+    const aiTime =
+        document.getElementById(
+            "aiUpdateTime"
+        );
+
+    if (aiTime) {
+
+        aiTime.textContent =
+            new Date().toLocaleTimeString(
+                "fa-IR"
+            );
+
+    }
+}
+
+
+/* =========================
+   جستجو
+========================= */
+
+function filterCryptoTable() {
+
+    const input =
+        document.getElementById(
+            "cryptoSearch"
+        );
+
+    if (!input) return;
+
+    const query =
+        input.value
+            .trim()
+            .toLowerCase();
+
+    if (!query) {
+
+        renderTable();
+
+        return;
+    }
+
+    const filtered =
+        marketData.filter(c =>
+            c.name
+                .toLowerCase()
+                .includes(query)
+            ||
+            c.symbol
+                .toLowerCase()
+                .includes(query)
+        );
+
+    renderTable(filtered);
+}
+
+
+/* =========================
+   پیام
+========================= */
+
+function showNotification(message) {
+
+    const notification =
+        document.getElementById(
+            "notification"
+        );
+
+    if (!notification) return;
+
+    notification.textContent =
+        message;
+
+    notification.classList.add(
+        "show"
+    );
+
+    setTimeout(() => {
+
+        notification.classList.remove(
+            "show"
+        );
+
+    }, 2500);
+}
+
+
+/* =========================
+   آپدیت اصلی
+========================= */
+
+async function performUpdate() {
+
+    if (updateRunning) return;
+
+    updateRunning = true;
+
+    const dot =
+        document.getElementById(
+            "updateDot"
+        );
+
+    if (dot) {
+
+        dot.style.background =
+            "#ff9a27";
+
+    }
+
+    try {
+
+        /*
+          هر بار واقعاً درخواست جدید
+          با timestamp ارسال می‌شود.
+        */
+
+        const results =
+            await Promise.allSettled([
+
+                fetchDollar(),
+
+                fetchBinancePrices()
+
+            ]);
+
+
+        const cryptoResult =
+            results[1];
+
+
+        if (
+            cryptoResult.status !==
+            "fulfilled"
+        ) {
+
+            throw new Error(
+                "Binance API failed"
+            );
+
+        }
+
+
+        marketData =
+            cryptoResult.value;
+
+
+        /*
+          رندر مجدد کل داده‌ها
+        */
+
+        renderCurrencyCards();
+
+        renderTicker();
+
+        renderTable();
+
+        renderAI();
+
+
+        const now =
+            new Date();
+
+
+        const lastUpdate =
+            document.getElementById(
+                "lastUpdate"
+            );
+
+        if (lastUpdate) {
+
+            lastUpdate.textContent =
+                now.toLocaleTimeString(
+                    "fa-IR"
+                );
+
+        }
+
+
+        if (dot) {
+
+            dot.style.background =
+                "#35e28b";
+
+        }
+
+
+        showNotification(
+            "قیمت‌ها بروزرسانی شدند"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LIVE PRICE ERROR:",
+            error
+        );
+
+
+        if (dot) {
+
+            dot.style.background =
+                "#ff5d6c";
+
+        }
+
+
+        showNotification(
+            "دریافت قیمت جدید ناموفق بود"
+        );
+
+    } finally {
+
+        updateRunning = false;
+
+        resetCountdown();
+
+    }
+}
+
+
+/* =========================
+   شمارش معکوس
+========================= */
+
+function resetCountdown() {
+
+    countdownValue = 60;
+
+    const el =
+        document.getElementById(
+            "countdown"
+        );
+
+    if (el) {
+
+        el.textContent =
+            countdownValue;
+
+    }
+}
+
+
+function startCountdown() {
+
+    clearInterval(
+        countdownTimer
+    );
+
+    countdownTimer =
+        setInterval(() => {
+
+            countdownValue--;
+
+            if (countdownValue <= 0) {
+
+                countdownValue = 60;
+
+            }
+
+            const el =
+                document.getElementById(
+                    "countdown"
+                );
+
+            if (el) {
+
+                el.textContent =
+                    countdownValue;
+
+            }
+
+        },1000);
+}
+
+
+/* =========================
+   اجرای اولیه
+========================= */
+
+async function init() {
+
+    startCountdown();
+
+    await performUpdate();
+
+}
+
+
+/* =========================
+   هر ۶۰ ثانیه
+========================= */
+
+setInterval(
+    performUpdate,
+    CONFIG.UPDATE_INTERVAL
+);
+
+
+/* شروع */
+
+init();
+
+</script>
 
         <div class="currency-card">
 
