@@ -620,7 +620,7 @@
             margin: 20px 0;
         }
 
-        .market-source {
+        .tgju-source {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -633,7 +633,7 @@
             margin-top: 10px;
         }
 
-        .api-info {
+        .proxy-info {
             background: rgba(255, 193, 7, 0.1);
             border: 1px solid rgba(255, 193, 7, 0.3);
             color: #ffc107;
@@ -711,14 +711,19 @@
 
         <section class="currency-section">
 
-            <h2 class="section-title">قیمت لحظه‌ای ارزها</h2>
+            <h2 class="section-title">قیمت لحظه‌ای ارزها (از TGJU)</h2>
 
-            <div class="market-source">
-                📡 نرخ دلار از API بازار ایران دریافت می‌شود
+            <div class="tgju-source">
+                📡 منبع:
+                <a href="https://www.tgju.org"
+                   target="_blank"
+                   style="color: #4dabf7; text-decoration: none;">
+                    TGJU.org
+                </a>
             </div>
 
-            <div class="api-info">
-                ⚡ بروزرسانی سایت هر ۶۰ ثانیه انجام می‌شود؛ در صورت خطا قیمت جعلی یا ثابت جایگزین نمی‌شود
+            <div class="proxy-info">
+                ⚡ نرخ دلار زنده دریافت می‌شود؛ در صورت قطعی، نرخ پیش‌فرض استفاده می‌شود
             </div>
 
             <div class="currency-grid"
@@ -832,7 +837,15 @@
 
         <p style="margin-top: 10px; font-size: 0.75rem;">
 
-            📡 نرخ ارز از API بازار ایران و قیمت رمزارزها از
+            📡 داده‌ها از
+
+            <a href="https://www.tgju.org"
+               target="_blank"
+               style="color: #4dabf7;">
+                TGJU.org
+            </a>
+
+            و
 
             <a href="https://www.coingecko.com"
                target="_blank"
@@ -860,13 +873,8 @@
 
 const API = {
 
-    NETARZ:
-        'https://netarz.ir/api/fx/v1',
-
-    // کلید را از پنل NetArz بگیر و اینجا قرار بده.
-    // دامنه GitHub Pages باید در پنل تأیید شده باشد.
-    NETARZ_API_KEY:
-        'fx-ntz-v1-lJFLkbyaYxtbcwf8VRxZJhLnJHbpWZgebCMBBR0v',
+    TGJU_API_GO:
+        'https://tgju-api-go.vercel.app/api/price',
 
     COINGECKO:
         'https://api.coingecko.com/api/v3'
@@ -882,7 +890,10 @@ const CONFIG = {
     // بروزرسانی دقیقاً هر 60 ثانیه
     UPDATE_INTERVAL: 60 * 1000,
 
-    // حداقل قابل قبول برای جلوگیری از نمایش پاسخ خراب API
+    // نرخ پیش‌فرض فعلی دلار به تومان
+    DEFAULT_DOLLAR_TOMAN: 232700,
+
+    // جلوگیری از استفاده از نرخ‌های خیلی قدیمی
     MIN_REASONABLE_DOLLAR_TOMAN: 150000
 };
 
@@ -893,7 +904,7 @@ const CONFIG = {
 
 let cryptoData = [];
 
-let marketData = {
+let tgjuData = {
     dollar: null
 };
 
@@ -1005,20 +1016,20 @@ function parseNumber(value) {
 function getDollarTomanRate() {
 
     if (
-        marketData.dollar &&
+        tgjuData.dollar &&
         Number.isFinite(
             Number(
-                marketData.dollar.price_toman
+                tgjuData.dollar.price_toman
             )
         )
     ) {
 
         return Number(
-            marketData.dollar.price_toman
+            tgjuData.dollar.price_toman
         );
     }
 
-    return 0;
+    return CONFIG.DEFAULT_DOLLAR_TOMAN;
 }
 
 
@@ -1140,90 +1151,156 @@ function createSparkline(data, color) {
 
 
 /* =====================================================
-   LIVE USD / TOMAN - NETARZ
+   TGJU DOLLAR
 ===================================================== */
 
-async function fetchDollarToman() {
+async function fetchTgjuDollar() {
 
-    if (!API.NETARZ_API_KEY ||
-        API.NETARZ_API_KEY === 'YOUR_NETARZ_API_KEY') {
-        throw new Error('NetArz API key is not configured');
-    }
+    try {
 
-    const response =
-        await fetch(
-            `${API.NETARZ}/rates/USD`,
-            {
-                method: 'GET',
-                cache: 'no-store',
-                headers: {
-                    'Authorization':
-                        `Bearer ${API.NETARZ_API_KEY}`,
-                    'Accept':
-                        'application/json'
-                },
-                signal:
-                    AbortSignal.timeout(10000)
-            }
+        const response =
+            await fetch(
+                API.TGJU_API_GO + '/currency',
+                {
+                    method: 'GET',
+                    cache: 'no-store',
+                    signal:
+                        AbortSignal.timeout(10000)
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `TGJU API HTTP ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data ||
+            !Array.isArray(data.items)
+        ) {
+            throw new Error(
+                'Invalid TGJU response'
+            );
+        }
+
+
+        const dollar =
+            data.items.find(
+                item =>
+                    item.key ===
+                    'price_dollar_rl'
+            );
+
+
+        if (!dollar) {
+            throw new Error(
+                'Dollar not found'
+            );
+        }
+
+
+        /*
+         * TGJU قیمت را به ریال می‌دهد.
+         */
+
+        const priceRial =
+            parseNumber(
+                dollar.price?.value
+            );
+
+
+        if (
+            !priceRial ||
+            priceRial <= 0
+        ) {
+            throw new Error(
+                'Invalid dollar price'
+            );
+        }
+
+
+        const priceToman =
+            priceRial / 10;
+
+
+        /*
+         * اگر API قدیمی و خراب بود
+         * مثلاً 85000 برگرداند،
+         * از آن استفاده نمی‌کنیم.
+         */
+
+        if (
+            priceToman <
+            CONFIG.MIN_REASONABLE_DOLLAR_TOMAN
+        ) {
+
+            throw new Error(
+                'Dollar API returned stale price'
+            );
+        }
+
+
+        const change =
+            parseNumber(
+                dollar.change?.percent
+            ) ?? 0;
+
+
+        const lowRial =
+            parseNumber(
+                dollar.low?.value
+            ) ?? priceRial;
+
+
+        const highRial =
+            parseNumber(
+                dollar.high?.value
+            ) ?? priceRial;
+
+
+        return {
+
+            price_rial:
+                priceRial,
+
+            price_toman:
+                priceToman,
+
+            change:
+                change,
+
+            low:
+                lowRial,
+
+            high:
+                highRial,
+
+            time:
+                dollar.time ||
+                formatTime(new Date()),
+
+            source:
+                'live'
+
+        };
+
+    } catch (error) {
+
+        console.warn(
+            'Live dollar API failed:',
+            error
         );
 
-    const body = await response.json().catch(() => null);
-
-    if (!response.ok) {
-        const message =
-            body?.error?.message ||
-            `NetArz HTTP ${response.status}`;
-        throw new Error(message);
+        return null;
     }
-
-    const data = body?.data;
-    const meta = body?.meta;
-
-    if (!data) {
-        throw new Error('Invalid NetArz response');
-    }
-
-    // mid = میانگین خرید و فروش و مناسب نمایش قیمت مرجع دلار
-    const priceToman =
-        parseNumber(data.mid);
-
-    if (!priceToman ||
-        priceToman < CONFIG.MIN_REASONABLE_DOLLAR_TOMAN) {
-        throw new Error('Invalid USD/Toman price');
-    }
-
-    return {
-        price_rial:
-            priceToman * 10,
-
-        price_toman:
-            priceToman,
-
-        buy:
-            parseNumber(data.buy),
-
-        sell:
-            parseNumber(data.sell),
-
-        change:
-            parseNumber(data.change_24h_percent) ?? 0,
-
-        low:
-            priceToman * 10,
-
-        high:
-            priceToman * 10,
-
-        time:
-            meta?.as_of ||
-            new Date().toISOString(),
-
-        source:
-            'netarz',
-
-        live:
-            meta?.is_delayed !== true
-    };
 }
 
 
@@ -1505,9 +1582,9 @@ function renderCurrencyCards() {
 
 
     const dollarChange =
-        marketData.dollar
+        tgjuData.dollar
             ? Number(
-                marketData.dollar.change || 0
+                tgjuData.dollar.change || 0
             )
             : 0;
 
@@ -1580,9 +1657,11 @@ function renderCurrencyCards() {
 
             <div class="price-main">
 
-                ${dollarTomanPrice > 0 ? formatToman(dollarTomanPrice) : '---'}
+                ${formatToman(
+                    dollarTomanPrice
+                )}
 
-                ${dollarTomanPrice > 0 ? 'تومان' : ''}
+                تومان
 
             </div>
 
@@ -1590,16 +1669,16 @@ function renderCurrencyCards() {
             <div class="price-toman">
 
                 ${
-                    marketData.dollar
-                        ? 'قیمت بازار ایران (API)'
-                        : 'در انتظار دریافت نرخ زنده...'
+                    tgjuData.dollar
+                        ? 'قیمت بازار آزاد (TGJU)'
+                        : 'نرخ پیش‌فرض: ۲۲۳٬۰۰۰ تومان'
                 }
 
             </div>
 
 
             ${
-                marketData.dollar
+                tgjuData.dollar
                     ? `
 
                     <div style="
@@ -1610,14 +1689,14 @@ function renderCurrencyCards() {
 
                         کمترین:
                         ${formatToman(
-                            marketData.dollar.buy || marketData.dollar.price_toman
+                            tgjuData.dollar.low / 10
                         )}
 
                         |
 
                         بیشترین:
                         ${formatToman(
-                            marketData.dollar.sell || marketData.dollar.price_toman
+                            tgjuData.dollar.high / 10
                         )}
 
                     </div>
@@ -2360,7 +2439,7 @@ async function performUpdate() {
         const results =
             await Promise.allSettled([
 
-                fetchDollarToman(),
+                fetchTgjuDollar(),
 
                 fetchCryptoPrices()
 
@@ -2377,10 +2456,44 @@ async function performUpdate() {
             results[0].value
         ) {
 
-            marketData.dollar =
+            tgjuData.dollar =
                 results[0].value;
 
+        } else if (
+            !tgjuData.dollar
+        ) {
+
+            /*
+             * اگر دلار زنده دریافت نشد،
+             * نرخ 223000 تومان استفاده می‌شود.
+             */
+
+            tgjuData.dollar = {
+
+                price_rial:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                price_toman:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN,
+
+                change: 0,
+
+                low:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                high:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                source:
+                    'fallback',
+
+                time:
+                    formatTime(
+                        new Date()
+                    )
+            };
         }
+
 
         /* =========================
            CRYPTO
@@ -2408,11 +2521,6 @@ async function performUpdate() {
         }
 
 
-        if (!marketData.dollar) {
-            console.warn('Dollar price unavailable; no fallback price will be shown.');
-        }
-
-
         /* =========================
            RENDER
         ========================= */
@@ -2429,14 +2537,16 @@ async function performUpdate() {
 
 
         if (
-            marketData.dollar &&
-            marketData.dollar.source ===
-            'netarz'
+            tgjuData.dollar &&
+            tgjuData.dollar.source ===
+            'live'
         ) {
 
             status.textContent =
-                formatTime(marketData.dollar.time) +
-                ' | نرخ زنده';
+                formatTime(
+                    new Date()
+                ) +
+                ' | اطلاعات زنده';
 
         } else {
 
@@ -2444,7 +2554,7 @@ async function performUpdate() {
                 formatTime(
                     new Date()
                 ) +
-                ' | نرخ دلار در دسترس نیست';
+                ' | دلار پیش‌فرض';
 
         }
 
@@ -2499,7 +2609,7 @@ async function performUpdate() {
 
 
         status.textContent =
-            marketData.dollar ? 'خطا در دریافت قیمت رمزارزها' : 'دریافت نرخ دلار ناموفق بود';
+            'خطا در دریافت قیمت رمزارزها';
 
 
         notif.textContent =
@@ -2519,6 +2629,41 @@ async function performUpdate() {
             },
             3000
         );
+
+
+        /*
+         * اگر دلار هم قبلاً نداشتیم،
+         * نرخ پیش‌فرض را فعال می‌کنیم.
+         */
+
+        if (!tgjuData.dollar) {
+
+            tgjuData.dollar = {
+
+                price_rial:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                price_toman:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN,
+
+                change: 0,
+
+                low:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                high:
+                    CONFIG.DEFAULT_DOLLAR_TOMAN * 10,
+
+                source:
+                    'fallback',
+
+                time:
+                    formatTime(
+                        new Date()
+                    )
+            };
+        }
+
 
         if (cryptoData.length) {
 
@@ -2621,3 +2766,4 @@ init();
 
 </body>
 </html>
+
