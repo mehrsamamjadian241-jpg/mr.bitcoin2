@@ -672,6 +672,9 @@
             background: rgba(247, 147, 26, 0.3);
             border-radius: 4px;
         }
+    
+        /* امکانات جدید */
+        .market-tools{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap}.search-box{flex:1;min-width:220px}.search-box input{width:100%;box-sizing:border-box;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#fff;font-family:inherit;outline:none}.search-box input:focus{border-color:#f7931a}.search-box input::placeholder{color:#777}.refresh-btn{border:none;border-radius:12px;padding:12px 20px;background:#f7931a;color:#000;font-family:inherit;font-weight:bold;cursor:pointer;transition:.2s}.refresh-btn:hover{transform:translateY(-2px);opacity:.9}.refresh-btn:disabled{opacity:.6;cursor:wait;transform:none}.market-overview{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px}.overview-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:15px;padding:18px}.overview-card span{display:block;color:#aaa;font-size:13px;margin-bottom:8px}.overview-card strong{display:block;font-size:18px;margin-bottom:5px}.overview-card small{color:#00ffa3}@media(max-width:700px){.market-overview{grid-template-columns:1fr}}
     </style>
 </head>
 
@@ -791,6 +794,16 @@
 
         <section class="table-section">
 
+            <div class="market-tools">
+                <div class="search-box"><input type="text" id="cryptoSearch" placeholder="جستجوی ارز، مثل Bitcoin یا BTC..." autocomplete="off"></div>
+                <button class="refresh-btn" id="manualRefreshBtn" type="button">🔄 بروزرسانی</button>
+            </div>
+            <div class="market-overview">
+                <div class="overview-card"><span>🚀 بیشترین رشد</span><strong id="topGainer">---</strong><small id="topGainerChange">---</small></div>
+                <div class="overview-card"><span>📉 بیشترین افت</span><strong id="topLoser">---</strong><small id="topLoserChange">---</small></div>
+                <div class="overview-card"><span>📊 وضعیت بازار</span><strong id="marketStatus">---</strong><small id="marketStatusText">در حال بررسی...</small></div>
+            </div>
+
             <h2 class="section-title"
                 style="margin-bottom: 20px;">
                 جدول کامل رمزارزها
@@ -891,7 +904,7 @@ const CONFIG = {
     UPDATE_INTERVAL: 60 * 1000,
 
     // نرخ پیش‌فرض فعلی دلار به تومان
-    DEFAULT_DOLLAR_TOMAN: 235100,
+    DEFAULT_DOLLAR_TOMAN: 232700,
 
     // جلوگیری از استفاده از نرخ‌های خیلی قدیمی
     MIN_REASONABLE_DOLLAR_TOMAN: 150000
@@ -1153,6 +1166,8 @@ function createSparkline(data, color) {
 /* =====================================================
    TGJU DOLLAR
 ===================================================== */
+
+async function fetchJSON(url, options={}) { const u=url+(url.includes('?')?'&':'?')+'_='+Date.now(); const r=await fetch(u,{...options,cache:'no-store',headers:{Accept:'application/json',...(options.headers||{})}}); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }
 
 async function fetchTgjuDollar() {
 
@@ -1671,7 +1686,7 @@ function renderCurrencyCards() {
                 ${
                     tgjuData.dollar
                         ? 'قیمت بازار آزاد (TGJU)'
-                        : 'نرخ پیش‌فرض: ۲۲۳٬۰۰۰ تومان'
+                        : 'نرخ پیش‌فرض: ${formatToman(CONFIG.DEFAULT_DOLLAR_TOMAN)} تومان'
                 }
 
             </div>
@@ -2391,6 +2406,8 @@ function renderAll() {
     renderCurrencyCards();
     renderAIRecommendations();
     renderTable();
+    updateMarketOverview();
+    filterCryptoTable();
 }
 
 
@@ -2734,6 +2751,36 @@ function updateCountdown() {
    START
 ===================================================== */
 
+function filterCryptoTable() {
+    const input=document.getElementById('cryptoSearch');
+    const query=normalizeDigits((input?.value||'').trim().toLowerCase());
+    document.querySelectorAll('#cryptoTableBody tr').forEach(row=>{
+        const text=normalizeDigits(row.textContent.toLowerCase());
+        row.style.display=!query||text.includes(query)?'':'none';
+    });
+}
+
+function updateMarketOverview() {
+    if(!Array.isArray(cryptoData)||!cryptoData.length)return;
+    const valid=cryptoData.filter(c=>Number.isFinite(Number(c.change_24h)));
+    if(!valid.length)return;
+    const sorted=[...valid].sort((a,b)=>Number(b.change_24h)-Number(a.change_24h));
+    const g=sorted[0],l=sorted[sorted.length-1];
+    document.getElementById('topGainer').textContent=`${g.name} (${String(g.symbol).toUpperCase()})`;
+    document.getElementById('topGainerChange').textContent=`${Number(g.change_24h)>=0?'+':''}${Number(g.change_24h).toFixed(2)}٪`;
+    document.getElementById('topLoser').textContent=`${l.name} (${String(l.symbol).toUpperCase()})`;
+    document.getElementById('topLoserChange').textContent=`${Number(l.change_24h)>=0?'+':''}${Number(l.change_24h).toFixed(2)}٪`;
+    const avg=valid.reduce((sum,c)=>sum+Number(c.change_24h),0)/valid.length;
+    document.getElementById('marketStatus').textContent=avg>1?'صعودی 📈':avg<-1?'نزولی 📉':'متعادل ➖';
+    document.getElementById('marketStatusText').textContent=`میانگین تغییر ۲۴ ساعت: ${avg>=0?'+':''}${avg.toFixed(2)}٪`;
+}
+
+async function manualRefresh(){
+    const button=document.getElementById('manualRefreshBtn');
+    if(button){button.disabled=true;button.textContent='⏳ در حال بروزرسانی...';}
+    try{await performUpdate();}finally{if(button){button.disabled=false;button.textContent='🔄 بروزرسانی';}}
+}
+
 async function init() {
 
     console.log(
@@ -2760,10 +2807,12 @@ async function init() {
    RUN
 ===================================================== */
 
+document.getElementById('cryptoSearch')?.addEventListener('input',filterCryptoTable);
+document.getElementById('manualRefreshBtn')?.addEventListener('click',manualRefresh);
+
 init();
 
 </script>
 
 </body>
 </html>
-
